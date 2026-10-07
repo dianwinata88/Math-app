@@ -1,4 +1,4 @@
-import { pick, randInt } from '../../core/rng';
+import { randInt } from '../../core/rng';
 import type { UnitDef } from '../../core/types';
 import { level, mc, numPad, trueFalse } from '../helpers';
 
@@ -60,17 +60,28 @@ export const codes: UnitDef = {
       ], rng, { hint: 'The difference is the grouped subtraction.' });
     }),
     level('g5.codes.interpret', 'Compare Without Computing', 'true-false', 2, (rng) => {
-      const a = randInt(rng, 1200, 9800); const b = randInt(rng, 300, 999);
-      const truths = [
-        `3 × (${a} + ${b}) is three times as large as ${a} + ${b}.`,
-        `(${a} × ${b}) ÷ 2 is half of ${a} × ${b}.`,
-      ];
-      const falses = [
-        `(n + m) × 4 is 4 more than n + m.`,
-        `a + (b × 5) is 5 times as large as a + b.`,
-      ];
       const isTrue = rng() < 0.5;
-      return trueFalse(pick(rng, isTrue ? truths : falses), isTrue, {
+      const template = randInt(rng, 0, 2);
+      const a = randInt(rng, 120, 9800);
+      const b = randInt(rng, 30, 999);
+      let statement: string;
+      if (template === 0 && isTrue) {
+        statement = `3 × (${a} + ${b}) is three times as large as ${a} + ${b}.`;
+      } else if (template === 0) {
+        statement = `(${a} + ${b}) × 4 is 4 more than ${a} + ${b}.`;
+      } else if (template === 1 && isTrue) {
+        statement = `(${a} × ${b}) ÷ 2 is half of ${a} × ${b}.`;
+      } else if (template === 1) {
+        statement = `${a} + (${b} × 5) is 5 times as large as ${a} + ${b}.`;
+      } else if (isTrue) {
+        const c = randInt(rng, 1, a + b - 1);
+        statement = `(${a} + ${b}) − ${c} is ${c} less than ${a} + ${b}.`;
+      } else {
+        let smaller = randInt(rng, 1, 8);
+        while (a - smaller === 2) smaller = randInt(rng, 1, 8);
+        statement = `(${a} − ${smaller}) × 2 is 2 more than ${a} − ${smaller}.`;
+      }
+      return trueFalse(statement, isTrue, {
         hint: 'Use the operation structure instead of calculating.',
       });
     }),
@@ -80,12 +91,12 @@ export const codes: UnitDef = {
         const n = randInt(rng, 3, 6); const a = (n - 1) * p; const b = (n - 1) * q;
         const answer = `(${a}, ${b})`;
         const options = [answer, `(${b}, ${a})`, `(${n * p}, ${n * q})`, `(${a}, ${n * q})`];
-        return mc(`Rule A adds ${p} each time; Rule B adds ${q} each time. Which ordered pair uses the ${n}th terms?`, answer, options.filter((option) => option !== answer), rng, {
+        return mc(`Both signals start at 0. Rule A adds ${p} each time; Rule B adds ${q} each time. Which ordered pair uses the ${n}th terms?`, answer, options.filter((option) => option !== answer), rng, {
           visual: { text: `A: 0, ${p}, ${2 * p}, …  B: 0, ${q}, ${2 * q}, …` },
           hint: 'The first term is 0, so the nth term uses n − 1 additions.',
         });
       }
-      return mc(`Rule A adds ${p}; Rule B adds ${q}. B’s term is always how many times A’s term?`, String(k), [
+      return mc(`Both signals start at 0. Rule A adds ${p}; Rule B adds ${q}. B’s term is always how many times A’s term?`, String(k), [
         String(k - 1), String(k + 1), String(k + p),
       ], rng, {
         visual: { text: `A: 0, ${p}, ${2 * p}, …  B: 0, ${q}, ${2 * q}, …` },

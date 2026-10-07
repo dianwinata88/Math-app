@@ -1,8 +1,21 @@
 import { pick, randInt } from '../../core/rng';
 import type { UnitDef } from '../../core/types';
 import { level, numPad } from '../helpers';
-import { add, buildMc, formatMoney, fracLabel, mul, sub } from './math';
+import {
+  add, buildMc, formatMoney, fractionMissionFoods, fracLabel, gcd, mul, sub,
+  supplyContainers, supplyItems, transportContexts,
+} from './math';
 import type { Frac } from './math';
+
+function properFraction(rng: () => number): Frac {
+  let d = randInt(rng, 2, 9);
+  let n = randInt(rng, 1, d - 1);
+  while (gcd(n, d) !== 1) {
+    d = randInt(rng, 2, 9);
+    n = randInt(rng, 1, d - 1);
+  }
+  return { n, d };
+}
 
 export const missions: UnitDef = {
   id: 'g5.missions',
@@ -11,23 +24,33 @@ export const missions: UnitDef = {
   domain: 'word-problems',
   levels: [
     level('g5.missions.supply-run', 'Supply Run', 'number-pad', 1, (rng) => {
-      const crates = pick(rng, [18, 24, 32, 36, 42]); const packs = randInt(rng, 18, 45);
-      const eaten = randInt(rng, 80, Math.min(250, crates * packs - 1));
-      return numPad(`Mission: ${crates} supply crates hold ${packs} meal packs each. After the crew uses ${eaten}, how many packs remain?`, crates * packs - eaten, {
-        visual: { text: `${crates} × ${packs} − ${eaten}` },
+      const containers = pick(rng, supplyContainers); const items = pick(rng, supplyItems);
+      const groups = pick(rng, [18, 24, 32, 36, 42]); const perGroup = randInt(rng, 18, 45);
+      const used = randInt(rng, 80, Math.min(250, groups * perGroup - 1));
+      return numPad(`Mission: ${groups} ${containers} hold ${perGroup} ${items} each. After the crew uses ${used}, how many remain?`, groups * perGroup - used, {
+        visual: { text: `${groups} × ${perGroup} − ${used}` },
       });
     }),
     level('g5.missions.crate-split', 'Shuttle Seats', 'number-pad', 2, (rng) => {
-      const people = randInt(rng, 120, 230); const capacity = randInt(rng, 18, 35);
-      const quotient = Math.floor(people / capacity); const remainder = people % capacity;
       const mode = randInt(rng, 0, 2);
-      if (mode === 0) return numPad(`${people} crew need shuttles with ${capacity} seats each. How many shuttles are needed?`, quotient + (remainder > 0 ? 1 : 0), {
-        visual: { text: `${people} ÷ ${capacity}` }, hint: 'Any crew left over still need a shuttle seat.',
-      });
-      if (mode === 1) return numPad(`${people} meal pouches are packed into boxes of ${capacity}. How many full boxes can be filled?`, quotient, {
-        visual: { text: `${people} ÷ ${capacity}` }, hint: 'Count only complete boxes.',
-      });
-      return numPad(`${people} samples are packed ${capacity} per case. How many samples are left over?`, remainder, {
+      if (mode === 0) {
+        const transport = pick(rng, transportContexts);
+        const people = randInt(rng, 120, 230); const capacity = randInt(rng, 18, 35);
+        const quotient = Math.floor(people / capacity); const remainder = people % capacity;
+        return numPad(`${people} ${transport.travelers} need ${transport.name} with ${capacity} ${transport.capacity} each. How many are needed?`, quotient + (remainder > 0 ? 1 : 0), {
+          visual: { text: `${people} ÷ ${capacity}` }, hint: 'Any travelers left over still need a place.',
+        });
+      }
+      if (mode === 1) {
+        const items = pick(rng, supplyItems); const containers = pick(rng, supplyContainers);
+        const count = randInt(rng, 120, 230); const capacity = randInt(rng, 18, 35);
+        return numPad(`${count} ${items} are packed into ${containers} of ${capacity} each. How many full containers can be filled?`, Math.floor(count / capacity), {
+          visual: { text: `${count} ÷ ${capacity}` }, hint: 'Count only complete containers.',
+        });
+      }
+      const transport = pick(rng, transportContexts);
+      const people = randInt(rng, 120, 230); const capacity = randInt(rng, 18, 35);
+      return numPad(`${people} ${transport.travelers} are split into groups of ${capacity} for ${transport.name}. How many are left over?`, people % capacity, {
         visual: { text: `${people} ÷ ${capacity}` }, hint: 'The remainder is what is left after full groups.',
       });
     }),
@@ -46,10 +69,11 @@ export const missions: UnitDef = {
         prompt = `Each space café batch needs ${fracLabel(perBatch)} cup of fruit. How many cups are needed for ${batches} batches?`;
         candidates = [{ n: perBatch.n + batches, d: perBatch.d }, { n: perBatch.n, d: perBatch.d * batches }, { n: answer.n + 1, d: answer.d }];
       } else {
-        const portion = { n: 1, d: 3 }; const pizza = { n: 3, d: 4 };
-        answer = mul(portion, pizza);
-        prompt = 'A crew member eats 1/3 of the remaining 3/4 of a pizza. What fraction of a whole pizza is eaten?';
-        candidates = [{ n: 1, d: 3 }, { n: 3, d: 4 }, { n: 3, d: 7 }];
+        const portion = properFraction(rng); const wholePortion = properFraction(rng);
+        const food = pick(rng, fractionMissionFoods);
+        answer = mul(portion, wholePortion);
+        prompt = `A bio-dome pet eats ${fracLabel(portion)} of a ${fracLabel(wholePortion)} ${food}. What fraction of the whole item is eaten?`;
+        candidates = [portion, wholePortion, { n: portion.n + wholePortion.n, d: portion.d + wholePortion.d }];
       }
       return buildMc(prompt, { label: fracLabel(answer), value: answer }, candidates.map((value) => ({
         label: fracLabel(value), value,

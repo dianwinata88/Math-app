@@ -27,6 +27,7 @@ const hullFacts = [
   { prompt: '4 equal sides and no right angles', answer: 'Rhombus', options: ['Rhombus', 'Square', 'Rectangle', 'Parallelogram'] },
   { prompt: '2 pairs of parallel sides, 4 right angles, and not all sides equal', answer: 'Rectangle', options: ['Rectangle', 'Square', 'Rhombus', 'Parallelogram'] },
   { prompt: '2 pairs of parallel sides, no right angles, and adjacent sides unequal', answer: 'Parallelogram', options: ['Parallelogram', 'Rectangle', 'Square', 'Rhombus'] },
+  { prompt: '4 sides, opposite sides parallel and equal, adjacent sides unequal, and no right angles', answer: 'Parallelogram', options: ['Parallelogram', 'Rectangle', 'Square', 'Rhombus'] },
   { prompt: '3 equal sides', answer: 'Equilateral triangle', options: ['Equilateral triangle', 'Isosceles triangle', 'Scalene triangle', 'Right triangle'] },
   { prompt: 'One angle greater than 90°', answer: 'Obtuse triangle', options: ['Obtuse triangle', 'Acute triangle', 'Right triangle', 'Equilateral triangle'] },
   { prompt: 'One 90° angle and two equal sides', answer: 'Right isosceles triangle', options: ['Right isosceles triangle', 'Right scalene triangle', 'Equilateral triangle', 'Obtuse triangle'] },
@@ -56,11 +57,13 @@ export const starMap: UnitDef = {
         ], rng, { visual: { text: 'Quadrant I: x right, y up' } });
       }
       const startX = randInt(rng, 2, 6); let startY = randInt(rng, 2, 6);
-      const right = 2; const up = 3;
+      const right = randInt(rng, 1, 4); let up = randInt(rng, 1, 4);
+      while (right === up) up = randInt(rng, 1, 4);
       while (startX + right === startY + up) startY = randInt(rng, 2, 6);
       const movedPoint = `(${startX + right}, ${startY + up})`;
       return mc(`Station is at (${startX}, ${startY}). Move ${right} right and ${up} up. What is the new point?`, movedPoint, [
-        `(${startX + up}, ${startY + right})`, `(${startX + right - 1}, ${startY + up})`, `(${startX - right}, ${startY + up})`,
+        `(${startX + up}, ${startY + right})`, `(${startX + right - 1}, ${startY + up})`,
+        startX - right >= 0 ? `(${startX - right}, ${startY + up})` : `(${startX + right}, ${startY + up + 1})`,
       ], rng);
     }),
     level('g5.star-map.hierarchy', 'Shape Family Tree', 'true-false', 2, (rng) => {

@@ -152,7 +152,7 @@ describe('Grade 5 generator invariants', () => {
     }
 
     for (const question of allAnswers('g5.fuel-lab.add-sub')) {
-      const [, a, operator, b] = question.prompt.match(/([\d.]+) ([+−]) ([\d.]+) = \?/)!;
+      const [, a, operator, b] = question.prompt.match(/: ([\d.]+) ([+−]) ([\d.]+) = \?/)!;
       const left = parseFraction(a)!; const right = parseFraction(b)!;
       const expected = operator === '+'
         ? fraction(left.n * right.d + right.n * left.d, left.d * right.d)
@@ -167,6 +167,11 @@ describe('Grade 5 generator invariants', () => {
           ? fraction(a.n * b.n, a.d * b.d)
           : fraction(a.n * b.d, a.d * b.n);
         assertFractionLabel(question.answer, expected);
+        if (id === 'g5.fuel-lab.multiply' && text[2] === '×' && /^0\.\d+ × 0\.\d+/.test(question.prompt)) {
+          const answer = parseFraction(question.answer)!;
+          const divideByTen = fraction(answer.n, answer.d * 10);
+          expect(question.options!.some((option) => sameFraction(parseFraction(option.label)!, divideByTen))).toBe(true);
+        }
       }
     }
   });
@@ -185,10 +190,19 @@ describe('Grade 5 generator invariants', () => {
   it('rounds decimals correctly and orders decimal codes strictly', () => {
     for (const question of allAnswers('g5.decimal-dock.compare-round')) {
       if (question.prompt.startsWith('Which reading')) {
-        const labels = ['0.5', '0.45', '0.405', '0.054'];
-        const values = labels.map((label) => parseFraction(label)!.n / parseFraction(label)!.d);
-        const answer = labels[values.indexOf(question.prompt.includes('greatest') ? Math.max(...values) : Math.min(...values))];
-        expect(question.answer).toBe(answer);
+        const options = question.options!.map((option) => option.label);
+        const values = options.map((label) => parseFraction(label)!);
+        const answerIndex = question.prompt.includes('greatest')
+          ? values.reduce((best, value, index) => value.n * values[best].d > values[best].n * value.d ? index : best, 0)
+          : values.reduce((best, value, index) => value.n * values[best].d < values[best].n * value.d ? index : best, 0);
+        expect(question.answer).toBe(options[answerIndex]);
+        const greatest = values.reduce((best, value) => value.n * best.d > best.n * value.d ? value : best);
+        const longestPrecision = Math.max(...options.map((label) => label.split('.')[1].length));
+        for (const [index, label] of options.entries()) {
+          if (label.split('.')[1].length === longestPrecision) {
+            expect(values[index].n * greatest.d).toBeLessThan(greatest.n * values[index].d);
+          }
+        }
       } else {
         const [, value, place] = question.prompt.match(/Round ([\d.]+) to the nearest (whole number|tenth|hundredth)/)!;
         const exact = parseFraction(value)!;
@@ -200,11 +214,12 @@ describe('Grade 5 generator invariants', () => {
       }
     }
     for (const question of allAnswers('g5.decimal-dock.order')) {
-      const values = question.sequence!.map((value) => {
-        const exact = parseFraction(value)!;
-        return exact.n / exact.d;
-      });
-      for (let index = 1; index < values.length; index += 1) expect(values[index]).toBeGreaterThan(values[index - 1]);
+      const labels = question.sequence!;
+      expect(labels.every((label) => !/\.\d*0$/.test(label))).toBe(true);
+      const values = labels.map((value) => parseFraction(value)!);
+      for (let index = 1; index < values.length; index += 1) {
+        expect(values[index].n * values[index - 1].d).toBeGreaterThan(values[index - 1].n * values[index].d);
+      }
     }
   });
 
@@ -214,6 +229,8 @@ describe('Grade 5 generator invariants', () => {
         const match = question.prompt.match(/(\d+)\/(\d+) ([+−]) (\d+)\/(\d+)/);
         expect(match).not.toBeNull();
         const [, a, b, operation, c, d] = match!;
+        expect(gcd(Number(a), Number(b))).toBe(1);
+        expect(gcd(Number(c), Number(d))).toBe(1);
         const numerator = operation === '+'
           ? Number(a) * Number(d) + Number(c) * Number(b)
           : Number(a) * Number(d) - Number(c) * Number(b);
@@ -222,6 +239,8 @@ describe('Grade 5 generator invariants', () => {
     }
     for (const question of allAnswers('g5.fraction-reactor.mixed-numbers')) {
       const match = question.prompt.match(/Merge (\d+) (\d+)\/(\d+) ([+−]) (\d+) (\d+)\/(\d+)/)!;
+      expect(gcd(Number(match[2]), Number(match[3]))).toBe(1);
+      expect(gcd(Number(match[6]), Number(match[7]))).toBe(1);
       const first = { n: Number(match[1]) * Number(match[3]) + Number(match[2]), d: Number(match[3]) };
       const second = { n: Number(match[5]) * Number(match[7]) + Number(match[6]), d: Number(match[7]) };
       const result = match[4] === '+'
@@ -235,36 +254,32 @@ describe('Grade 5 generator invariants', () => {
     for (const question of allAnswers('g5.gravity-lab.multiply')) {
       const pair = question.prompt.match(/(\d+)\/(\d+) × (\d+)\/(\d+)/);
       if (pair) {
+        expect(Number(pair[1])).toBeLessThan(Number(pair[2]));
+        expect(Number(pair[3])).toBeLessThan(Number(pair[4]));
+        expect(gcd(Number(pair[1]), Number(pair[2]))).toBe(1);
+        expect(gcd(Number(pair[3]), Number(pair[4]))).toBe(1);
         assertFractionLabel(question.answer, fraction(Number(pair[1]) * Number(pair[3]), Number(pair[2]) * Number(pair[4])));
       } else {
         const whole = question.prompt.match(/(\d+)\/(\d+) × (\d+) = \?/)!;
+        expect(Number(whole[1])).toBeLessThan(Number(whole[2]));
+        expect(gcd(Number(whole[1]), Number(whole[2]))).toBe(1);
         assertFractionLabel(question.answer, fraction(Number(whole[1]) * Number(whole[3]), Number(whole[2])));
       }
     }
     for (const question of allAnswers('g5.gravity-lab.mixed-multiply')) {
       const [, aw, an, ad, bw, bn, bd] = question.prompt.match(/(\d+) (\d+)\/(\d+) × (\d+) (\d+)\/(\d+)/)!;
+      expect(Number(an)).toBeLessThan(Number(ad));
+      expect(Number(bn)).toBeLessThan(Number(bd));
+      expect(gcd(Number(an), Number(ad))).toBe(1);
+      expect(gcd(Number(bn), Number(bd))).toBe(1);
       const first = Number(aw) * Number(ad) + Number(an);
       const second = Number(bw) * Number(bd) + Number(bn);
       assertFractionLabel(question.answer, fraction(first * second, Number(ad) * Number(bd)));
     }
     for (const question of allAnswers('g5.gravity-lab.divide-unit')) {
-      let numerator: number; let denominator: number;
-      const share = question.prompt.match(/Split (\d+)\/(\d+).*?(\d+) crew/);
-      const juice = question.prompt.match(/Share (\d+)\/(\d+) L.*?(\d+) crew/);
-      const scoops = question.prompt.match(/How many (\d+)\/(\d+)-cup scoops fill (\d+) cups/);
-      const packs = question.prompt.match(/How many (\d+)\/(\d+)-unit packs fit into (\d+) units/);
-      if (share || juice) {
-        const data = share ?? juice!;
-        numerator = Number(data[1]);
-        denominator = Number(data[2]) * Number(data[3]);
-      } else if (scoops || packs) {
-        const data = scoops ?? packs!;
-        numerator = Number(data[3]) * Number(data[2]);
-        denominator = Number(data[1]);
-      } else {
-        throw new Error(`Unrecognized unit-fraction prompt: ${question.prompt}`);
-      }
-      assertFractionLabel(question.answer, fraction(numerator, denominator));
+      const [, first, second] = question.prompt.match(/Calculate (1\/\d+|\d+) ÷ (1\/\d+|\d+)\./)!;
+      const left = parseFraction(first)!; const right = parseFraction(second)!;
+      assertFractionLabel(question.answer, fraction(left.n * right.d, left.d * right.n));
     }
   });
 
@@ -326,10 +341,11 @@ describe('Grade 5 generator invariants', () => {
 
   it('re-derives sample line-plot totals, differences, and equal shares', () => {
     for (const question of allAnswers('g5.cargo-hold.line-plot')) {
-      const entries = [...question.prompt.matchAll(/(\d+)\/8 kg \| (✕+)/g)].map((match) => ({
-        eighths: Number(match[1]),
+      const entries = [...question.visual!.text!.matchAll(/([\d/]+) kg \| (✕+)/g)].map((match) => ({
+        eighths: parseFraction(match[1])!.n * 8 / parseFraction(match[1])!.d,
         count: match[2].length,
       }));
+      expect(entries.every((entry) => Number.isInteger(entry.eighths) && entry.eighths >= 1 && entry.eighths <= 7)).toBe(true);
       const totalEighths = entries.reduce((sum, entry) => sum + entry.eighths * entry.count, 0);
       const totalCount = entries.reduce((sum, entry) => sum + entry.count, 0);
       if (question.prompt.includes('total mass')) {
@@ -337,7 +353,7 @@ describe('Grade 5 generator invariants', () => {
       } else if (question.prompt.includes('difference between')) {
         assertFractionLabel(question.answer, fraction(entries[entries.length - 1].eighths - entries[0].eighths, 8));
       } else {
-        const beakers = Number(question.prompt.match(/shared equally among (\d+) beakers/)![1]);
+        const beakers = Number(question.prompt.match(/each of (\d+) beakers/)![1]);
         expect(beakers).toBe(totalCount);
         assertFractionLabel(question.answer, fraction(totalEighths, 8 * beakers));
       }
@@ -348,14 +364,24 @@ describe('Grade 5 generator invariants', () => {
     for (const question of allAnswers('g5.missions.fraction-mission')) {
       const route = question.prompt.match(/travels (\d+)\/(\d+) km, then (\d+)\/(\d+) km/);
       const batches = question.prompt.match(/Each space café batch needs (\d+)\/(\d+) cup.*?(\d+) batches/);
+      const fractionOfFraction = question.prompt.match(/eats (\d+)\/(\d+) of a (\d+)\/(\d+) /);
       if (route) {
+        expect(gcd(Number(route[1]), Number(route[2]))).toBe(1);
+        expect(gcd(Number(route[3]), Number(route[4]))).toBe(1);
         const answer = fraction(Number(route[1]) * Number(route[4]) + Number(route[3]) * Number(route[2]), Number(route[2]) * Number(route[4]));
         assertFractionLabel(question.answer, answer);
       } else if (batches) {
+        expect(gcd(Number(batches[1]), Number(batches[2]))).toBe(1);
         assertFractionLabel(question.answer, fraction(Number(batches[1]) * Number(batches[3]), Number(batches[2])));
+      } else if (fractionOfFraction) {
+        expect(gcd(Number(fractionOfFraction[1]), Number(fractionOfFraction[2]))).toBe(1);
+        expect(gcd(Number(fractionOfFraction[3]), Number(fractionOfFraction[4]))).toBe(1);
+        assertFractionLabel(question.answer, fraction(
+          Number(fractionOfFraction[1]) * Number(fractionOfFraction[3]),
+          Number(fractionOfFraction[2]) * Number(fractionOfFraction[4]),
+        ));
       } else {
-        expect(question.prompt).toContain('1/3 of the remaining 3/4');
-        assertFractionLabel(question.answer, fraction(1, 4));
+        throw new Error(`Unrecognized fraction mission: ${question.prompt}`);
       }
     }
     for (const question of allAnswers('g5.missions.decimal-budget')) {
@@ -376,17 +402,73 @@ describe('Grade 5 generator invariants', () => {
       const comparison = sum.n * benchmark.d - benchmark.n * sum.d;
       expect(question.answer).toBe(String(match[5] === 'greater than' ? comparison > 0 : comparison < 0));
     }
+    for (const question of allAnswers('g5.gravity-lab.scaling')) {
+      const [, whole, factor, relation, compareTo] = question.prompt.match(/^(\d+) × (1|\d+\/\d+) is (less than|greater than|equal to) (\d+)\.$/)!;
+      expect(Number(compareTo)).toBe(Number(whole));
+      const multiplier = parseFraction(factor)!;
+      expect(gcd(multiplier.n, multiplier.d)).toBe(1);
+      const productComparison = Number(whole) * multiplier.n - Number(compareTo) * multiplier.d;
+      const expected = relation === 'less than' ? productComparison < 0
+        : relation === 'greater than' ? productComparison > 0 : productComparison === 0;
+      expect(question.answer).toBe(String(expected));
+    }
     for (const question of allAnswers('g5.star-map.read-point')) {
       const answer = question.answer.match(/^\((\d+), (\d+)\)$/)!;
       const prompt = question.prompt.match(/origin, go (\d+) units right and (\d+) units up/)
-        ?? question.prompt.match(/at \((\d+), (\d+)\). Move 2 right and 3 up/);
+        ?? question.prompt.match(/at \((\d+), (\d+)\). Move (\d+) right and (\d+) up/);
       if (question.prompt.includes('origin')) {
         expect(answer[1]).toBe(prompt![1]);
         expect(answer[2]).toBe(prompt![2]);
       } else {
-        expect(Number(answer[1])).toBe(Number(prompt![1]) + 2);
-        expect(Number(answer[2])).toBe(Number(prompt![2]) + 3);
+        const [, startX, startY, right, up] = prompt!;
+        expect(Number(right)).toBeGreaterThanOrEqual(1);
+        expect(Number(right)).toBeLessThanOrEqual(4);
+        expect(Number(up)).toBeGreaterThanOrEqual(1);
+        expect(Number(up)).toBeLessThanOrEqual(4);
+        expect(right).not.toBe(up);
+        expect(Number(answer[1])).toBe(Number(startX) + Number(right));
+        expect(Number(answer[2])).toBe(Number(startY) + Number(up));
       }
+    }
+  });
+
+  it('varies every Grade 5 level across the first 100 seeds', () => {
+    for (const level of levels) {
+      const combinations = new Set<string>();
+      for (let seed = 1; seed <= 100; seed += 1) {
+        const question = level.generate(createRng(seed));
+        const key = question.kind === 'match-pairs'
+          ? JSON.stringify(question.pairs)
+          : question.kind === 'order-sequence'
+            ? JSON.stringify(question.sequence)
+            : `${question.prompt}\n${question.answer}`;
+        combinations.add(key);
+      }
+      if (combinations.size < 8) throw new Error(`${level.id}: found ${combinations.size} distinct combinations`);
+    }
+  });
+
+  it('uses numeric algebra claims and states both signal starting values', () => {
+    for (const question of allAnswers('g5.codes.interpret')) {
+      expect(question.prompt).not.toMatch(/\b[nmab]\b/i);
+      expect(question.prompt.match(/\d+/g)!.length).toBeGreaterThanOrEqual(2);
+    }
+    for (const question of allAnswers('g5.codes.two-rules')) {
+      expect(question.prompt).toContain('Both signals start at 0.');
+    }
+  });
+
+  it('keeps fuel labels minimal and places the sample plot in its visual', () => {
+    for (const id of ['g5.fuel-lab.add-sub', 'g5.fuel-lab.multiply', 'g5.fuel-lab.divide']) {
+      for (const question of allAnswers(id)) {
+        expect(question.prompt).not.toMatch(/\d+\.\d*0(?:\s|[=×÷])/);
+        for (const option of question.options!) expect(option.label).not.toMatch(/\d+\.\d*0$/);
+      }
+    }
+    for (const question of allAnswers('g5.cargo-hold.line-plot')) {
+      expect(question.prompt).not.toContain('\n');
+      expect(question.visual?.text).toContain(' kg | ');
+      expect(question.visual?.text).not.toMatch(/(?:2|4|6|8)\/8 kg/);
     }
   });
 

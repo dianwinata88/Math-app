@@ -1,12 +1,17 @@
 import { randInt } from '../../core/rng';
 import type { UnitDef } from '../../core/types';
 import { level, trueFalse } from '../helpers';
-import { add, buildMc, compare, fracLabel, simplify, sub } from './math';
+import { add, buildMc, compare, fracLabel, gcd, simplify, sub } from './math';
 import type { Frac } from './math';
 
 function properFraction(rng: () => number, minD = 2, maxD = 12): Frac {
-  const d = randInt(rng, minD, maxD);
-  return { n: randInt(rng, 1, d - 1), d };
+  let d = randInt(rng, minD, maxD);
+  let n = randInt(rng, 1, d - 1);
+  while (gcd(n, d) !== 1) {
+    d = randInt(rng, minD, maxD);
+    n = randInt(rng, 1, d - 1);
+  }
+  return { n, d };
 }
 
 function candidatesFor(values: Frac[]) {
@@ -46,10 +51,10 @@ export const fractionReactor: UnitDef = {
       }, (value) => fracLabel(typeof value === 'number' ? { n: value, d: 1 } : value));
     }),
     level('g5.fraction-reactor.mixed-numbers', 'Mixed-Number Merge', 'multiple-choice', 2, (rng) => {
-      const d1 = randInt(rng, 2, 8); let d2 = randInt(rng, 2, 8);
-      while (d1 === d2) d2 = randInt(rng, 2, 8);
-      const n1 = randInt(rng, 1, d1 - 1);
-      const n2 = randInt(rng, 1, d2 - 1);
+      const firstPart = properFraction(rng, 2, 8); let secondPart = properFraction(rng, 2, 8);
+      while (firstPart.d === secondPart.d) secondPart = properFraction(rng, 2, 8);
+      const d1 = firstPart.d; const d2 = secondPart.d;
+      const n1 = firstPart.n; const n2 = secondPart.n;
       const subtracting = rng() < 0.5;
       const wholeA = randInt(rng, 3, 6); const wholeB = randInt(rng, 1, 2);
       let first: Frac = { n: wholeA * d1 + n1, d: d1 };

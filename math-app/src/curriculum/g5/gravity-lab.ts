@@ -1,8 +1,18 @@
-import { randInt } from '../../core/rng';
+import { pick, randInt } from '../../core/rng';
 import type { UnitDef } from '../../core/types';
 import { level, matchPairs, trueFalse } from '../helpers';
-import { buildMc, fracLabel, mul, simplify } from './math';
+import { buildMc, fracLabel, gcd, mul, shareContexts, simplify } from './math';
 import type { Frac } from './math';
+
+function properFraction(rng: () => number, minD = 2, maxD = 7): Frac {
+  let d = randInt(rng, minD, maxD);
+  let n = randInt(rng, 1, d - 1);
+  while (gcd(n, d) !== 1) {
+    d = randInt(rng, minD, maxD);
+    n = randInt(rng, 1, d - 1);
+  }
+  return { n, d };
+}
 
 export const gravityLab: UnitDef = {
   id: 'g5.gravity-lab',
@@ -27,18 +37,18 @@ export const gravityLab: UnitDef = {
       const wholeMode = rng() < 0.5;
       let a: Frac; let b: Frac; let prompt: string; let wrong: Frac[];
       if (wholeMode) {
-        const denominator = randInt(rng, 2, 5); const numerator = randInt(rng, 1, denominator - 1); const whole = randInt(rng, 2, 8);
-        a = { n: numerator, d: denominator }; b = { n: whole, d: 1 };
-        prompt = `${numerator}/${denominator} × ${whole} = ?`;
+        a = properFraction(rng, 2, 5); const whole = randInt(rng, 2, 8);
+        b = { n: whole, d: 1 };
+        prompt = `${a.n}/${a.d} × ${whole} = ?`;
         wrong = [
-          { n: numerator * whole, d: denominator * 1 },
-          { n: numerator + whole, d: denominator },
-          { n: numerator, d: denominator * whole },
-          { n: numerator * whole, d: 1 },
+          { n: a.n * whole, d: a.d },
+          { n: a.n + whole, d: a.d },
+          { n: a.n, d: a.d * whole },
+          { n: a.n * whole, d: 1 },
         ];
       } else {
-        a = { n: randInt(rng, 1, 4), d: randInt(rng, 2, 7) };
-        b = { n: randInt(rng, 1, 4), d: randInt(rng, 2, 7) };
+        a = properFraction(rng);
+        b = properFraction(rng);
         prompt = `${a.n}/${a.d} × ${b.n}/${b.d} = ?`;
         wrong = [
           { n: a.n * b.n, d: a.d },
@@ -54,8 +64,10 @@ export const gravityLab: UnitDef = {
         }, (value) => fracLabel(typeof value === 'number' ? { n: value, d: 1 } : value));
     }),
     level('g5.gravity-lab.mixed-multiply', 'Mixed-Number Thrust', 'multiple-choice', 2, (rng) => {
-      const firstWhole = randInt(rng, 1, 3); const firstNumerator = randInt(rng, 1, 3); const firstDenominator = randInt(rng, firstNumerator + 1, 5);
-      const secondWhole = randInt(rng, 1, 3); const secondNumerator = randInt(rng, 1, 3); const secondDenominator = randInt(rng, secondNumerator + 1, 5);
+      const firstWhole = randInt(rng, 1, 3); const firstPart = properFraction(rng, 2, 5);
+      const secondWhole = randInt(rng, 1, 3); const secondPart = properFraction(rng, 2, 5);
+      const firstNumerator = firstPart.n; const firstDenominator = firstPart.d;
+      const secondNumerator = secondPart.n; const secondDenominator = secondPart.d;
       const first: Frac = { n: firstWhole * firstDenominator + firstNumerator, d: firstDenominator };
       const second: Frac = { n: secondWhole * secondDenominator + secondNumerator, d: secondDenominator };
       const answer = mul(first, second);
@@ -72,33 +84,44 @@ export const gravityLab: UnitDef = {
     }),
     level('g5.gravity-lab.scaling', 'Scale Factor Sense', 'true-false', 3, (rng) => {
       const n = randInt(rng, 2, 12);
-      const statements = [
-        { text: `5 × 3/4 is less than 5.`, answer: true },
-        { text: `n × 7/5 is less than n when n = ${n}.`, answer: false },
-        { text: `${n} × 1 is equal to ${n}.`, answer: true },
-        { text: `${n} × 2/3 is greater than ${n}.`, answer: false },
-      ];
-      const statement = statements[randInt(rng, 0, statements.length - 1)];
-      return trueFalse(statement.text, statement.answer, {
+      const factorType = randInt(rng, 0, 2);
+      const factor = factorType === 0 ? properFraction(rng, 2, 8)
+        : factorType === 1 ? { n: 1, d: 1 }
+          : (() => {
+            const d = randInt(rng, 2, 7);
+            let n = randInt(rng, d + 1, d * 2);
+            while (gcd(n, d) !== 1) n = randInt(rng, d + 1, d * 2);
+            return { n, d };
+          })();
+      const factorLabel = factor.n === factor.d ? '1' : `${factor.n}/${factor.d}`;
+      const relation = factor.n < factor.d
+        ? (rng() < 0.5 ? 'less than' : 'greater than')
+        : factor.n === factor.d
+          ? (rng() < 0.5 ? 'equal to' : 'less than')
+          : (rng() < 0.5 ? 'greater than' : 'less than');
+      const product = n * factor.n;
+      const comparison = product - n * factor.d;
+      const isTrue = relation === 'less than' ? comparison < 0
+        : relation === 'greater than' ? comparison > 0 : comparison === 0;
+      return trueFalse(`${n} × ${factorLabel} is ${relation} ${n}.`, isTrue, {
         hint: 'Multiplying by a fraction less than 1 makes it smaller.',
       });
     }),
     level('g5.gravity-lab.divide-unit', 'Unit Fraction Split', 'multiple-choice', 3, (rng) => {
-      const scenario = randInt(rng, 0, 3);
-      let prompt: string; let answer: Frac; let wrong: Frac[];
-      if (scenario === 0) {
-        prompt = 'Split 1/3 of a fuel cell evenly among 4 crew. How much does each receive?';
-        answer = { n: 1, d: 12 }; wrong = [{ n: 4, d: 3 }, { n: 3, d: 4 }, { n: 4, d: 1 }];
-      } else if (scenario === 1) {
-        prompt = 'How many 1/4-unit packs fit into 5 units of cargo?';
-        answer = { n: 20, d: 1 }; wrong = [{ n: 5, d: 4 }, { n: 1, d: 20 }, { n: 4, d: 5 }];
-      } else if (scenario === 2) {
-        prompt = 'Share 1/2 L of juice among 3 crew. How much juice is each share?';
-        answer = { n: 1, d: 6 }; wrong = [{ n: 3, d: 2 }, { n: 2, d: 3 }, { n: 1, d: 5 }];
-      } else {
-        prompt = 'How many 1/3-cup scoops fill 4 cups?';
-        answer = { n: 12, d: 1 }; wrong = [{ n: 4, d: 3 }, { n: 3, d: 4 }, { n: 1, d: 12 }];
-      }
+      const k = randInt(rng, 2, 8); const m = randInt(rng, 2, 6);
+      const context = pick(rng, shareContexts);
+      const unitShare = rng() < 0.5;
+      const prompt = unitShare
+        ? `The ${context} holds 1/${k} unit. Split it among ${m} crew members. Calculate 1/${k} ÷ ${m}.`
+        : `There are ${m} units of ${context}. How many 1/${k}-unit portions fit? Calculate ${m} ÷ 1/${k}.`;
+      const answer: Frac = unitShare ? { n: 1, d: k * m } : { n: m * k, d: 1 };
+      const wrong: Frac[] = [
+        { n: m, d: k },
+        { n: k, d: m },
+        { n: 1, d: k * m },
+        { n: m * k, d: 1 },
+        { n: m + k, d: 1 },
+      ];
       return buildMc(prompt, { label: fracLabel(answer), value: answer }, wrong.map((value) => ({
         label: fracLabel(value), value,
       })), rng, { hint: 'Dividing by a unit fraction asks how many unit-size groups fit.' },

@@ -45,23 +45,29 @@ export const decimalDock: UnitDef = {
     }),
     level('g5.decimal-dock.compare-round', 'Compare & Round', 'multiple-choice', 2, (rng) => {
       if (rng() < 0.5) {
-        const readings = ['0.5', '0.45', '0.405', '0.054'];
+        const a = randInt(rng, 1, 9);
+        let b = randInt(rng, 1, 9);
+        while (a === b) b = randInt(rng, 1, 9);
+        const values = [a * 100, b * 100 + a * 10, b * 100 + a, a * 10 + b];
+        const readings = [`0.${a}`, `0.${b}${a}`, `0.${b}0${a}`, `0.0${a}${b}`];
         const greatest = rng() < 0.5;
-        const values = [500, 450, 405, 54];
-        const index = greatest ? 0 : 3;
+        const index = values.indexOf(greatest ? Math.max(...values) : Math.min(...values));
         const answer = readings[index];
         const candidates = readings.map((label, i) => ({ label, value: values[i] })).filter((candidate) => candidate.label !== answer);
         return buildMc(`Which reading is ${greatest ? 'greatest' : 'least'}?`, { label: answer, value: values[index] }, candidates, rng, {
           hint: 'Compare equal place values from left to right; extra digits do not always mean greater.',
         });
       }
-      const value = pick(rng, [3476, 2183, 2995, 6412, 7855, 1204]);
+      const rawValue = randInt(rng, 1001, 9999);
+      const value = rng() < 0.25
+        ? Math.floor(rawValue / 1000) * 1000 + 995
+        : rawValue % 10 !== 0 ? rawValue : rawValue + 1;
       const place = pick(rng, [0, 1, 2]);
       const divisor = [1000, 100, 10][place];
       const rounded = roundDecimal(value, 1000, place);
       const answer = decLabel(rounded, 1000, place);
       const trunc = Math.floor(value / divisor) * divisor;
-      const wrongPlace = roundDecimal(value, 1000, place === 0 ? 2 : place === 1 ? 1 : 0);
+      const wrongPlace = roundDecimal(value, 1000, [1, 2, 1][place]);
       const candidates = [
         { label: decLabel(trunc, 1000, place), value: trunc },
         { label: decLabel(wrongPlace, 1000, place), value: wrongPlace },
@@ -83,7 +89,7 @@ export const decimalDock: UnitDef = {
         values.add(value);
       }
       const sequence = [...values].sort((a, b) => a - b).map((value) => {
-        const places = value % 100 !== 0 ? 3 : value % 10 !== 0 ? 2 : 1;
+        const places = value % 10 !== 0 ? 3 : value % 100 !== 0 ? 2 : 1;
         return decLabel(value, 1000, places);
       });
       return orderSeq('Order the docking codes from least to greatest.', sequence);

@@ -1,7 +1,7 @@
-import { randInt } from '../../core/rng';
+import { pick, randInt } from '../../core/rng';
 import type { UnitDef } from '../../core/types';
 import { level, numPad } from '../helpers';
-import { buildMc, fracLabel, simplify } from './math';
+import { buildMc, fracLabel, simplify, volumeStructures } from './math';
 import type { Frac } from './math';
 
 export const cargoHold: UnitDef = {
@@ -28,15 +28,16 @@ export const cargoHold: UnitDef = {
       return numPad(`Convert the cargo measure: ${prompt}.`, answer, { visual: { text: prompt } });
     }),
     level('g5.cargo-hold.volume', 'Pack the Crate', 'number-pad', 2, (rng) => {
+      const structure = pick(rng, volumeStructures);
       if (rng() < 0.5) {
         const rows = randInt(rng, 3, 7); const perRow = randInt(rng, 3, 8); const layers = randInt(rng, 2, 6);
         const answer = rows * perRow * layers;
-        return numPad(`A crate has ${rows} rows of ${perRow} unit cubes in ${layers} layers. How many cubes fit?`, answer, {
+        return numPad(`A ${structure} has ${rows} rows of ${perRow} unit cubes in ${layers} layers. How many cubes fit?`, answer, {
           visual: { text: `🧊 ${rows} rows × ${perRow} cubes × ${layers} layers` },
         });
       }
       const l = randInt(rng, 3, 12); const w = randInt(rng, 2, 9); const h = randInt(rng, 2, 8);
-      return numPad(`A cargo module is ${l} cm long, ${w} cm wide, and ${h} cm high. Find its volume in cm³.`, l * w * h, {
+      return numPad(`A ${structure} is ${l} cm long, ${w} cm wide, and ${h} cm high. Find its volume in cm³.`, l * w * h, {
         visual: { text: `${l} × ${w} × ${h} cm³` },
       });
     }),
@@ -66,24 +67,24 @@ export const cargoHold: UnitDef = {
       const totalCount = counts.reduce((sum, count) => sum + count, 0);
       const totalEighths = selected.reduce((sum, value, index) => sum + value * counts[index], 0);
       const type = randInt(rng, 0, 2);
-      const plot = selected.map((value, index) => `${value}/8 kg | ${'✕'.repeat(counts[index])}`).join('\n');
+      const plot = selected.map((value, index) => `${fracLabel(simplify({ n: value, d: 8 }))} kg | ${'✕'.repeat(counts[index])}`).join('\n');
       let answer: Frac; let prompt: string; let wrong: Frac[];
       if (type === 0) {
         answer = simplify({ n: totalEighths, d: 8 });
-        prompt = `The asteroid sample masses are shown. What is their total mass?\n${plot}`;
+        prompt = 'What is the total mass of the asteroid samples?';
         wrong = [simplify({ n: totalEighths + 1, d: 8 }), simplify({ n: Math.max(1, totalEighths - 1), d: 8 }), simplify({ n: totalCount, d: 8 })];
       } else if (type === 1) {
         answer = simplify({ n: selected[selected.length - 1] - selected[0], d: 8 });
-        prompt = `The asteroid sample masses are shown. What is the difference between the heaviest and lightest?\n${plot}`;
+        prompt = 'What is the difference between the heaviest and lightest samples?';
         wrong = [simplify({ n: selected[selected.length - 1], d: 8 }), simplify({ n: selected[0], d: 8 }), simplify({ n: selected[selected.length - 1] + selected[0], d: 8 })];
       } else {
         answer = simplify({ n: totalEighths, d: 8 * totalCount });
-        prompt = `The samples are shown. If all the material is shared equally among ${totalCount} beakers, how much goes in each?\n${plot}`;
+        prompt = `How much sample mass goes in each of ${totalCount} beakers?`;
         wrong = [simplify({ n: totalEighths, d: 8 }), simplify({ n: totalCount, d: totalEighths }), simplify({ n: totalEighths, d: 8 * (totalCount + 1) })];
       }
       return buildMc(prompt, { label: fracLabel(answer), value: answer }, wrong.map((value) => ({
         label: fracLabel(value), value,
-      })), rng, { hint: 'Count each mark and use the fraction named on its line.' },
+      })), rng, { visual: { text: plot }, hint: 'Count each mark and use the fraction named on its line.' },
       (value) => fracLabel(typeof value === 'number' ? { n: value, d: 1 } : value));
     }),
   ],

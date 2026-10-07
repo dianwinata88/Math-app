@@ -123,5 +123,15 @@ export function formatMoney(cents: number): string {
   return `$${Math.floor(cents / 100)}.${String(cents % 100).padStart(2, '0')}`;
 }
 
-export const crew = ['Commander Lee', 'Pilot Nia', 'Engineer Sol', 'Scientist Rae'];
-export const stationLocations = ['the orbital greenhouse', 'the Europa lab', 'the rover bay', 'the zero-g café'];
+export const supplyContainers = ['cargo crates', 'storage pods', 'supply lockers'];
+export const supplyItems = ['meal pouches', 'fuel cells', 'oxygen canisters', 'Europa fish samples'];
+export const transportContexts = [
+  { name: 'shuttles', capacity: 'seats', travelers: 'crew members' },
+  { name: 'Europa subs', capacity: 'berths', travelers: 'researchers' },
+  { name: 'zero-g soccer teams', capacity: 'players', travelers: 'players' },
+];
+export const volumeStructures = ['cargo crate', 'Europa aquarium tank', 'bio-dome pet habitat'];
+export const decimalSupplies = ['fuel cells in liters (L)', 'oxygen in kilograms (kg)'];
+export const shareContexts = ['fuel-cell reserve', 'bio-dome juice', 'ration bars', 'Europa sub oxygen'];
+export const fractionMissionFoods = ['space-café snack', 'Europa algae pizza', 'fruit pouch'];
+export const engineLogs = ['Station log', 'Rover bay log', 'Crew report'];
