@@ -1,0 +1,19 @@
+export async function requestAgeRangeAsync(_) {
+    return { lowerBound: 18, upperBound: null };
+}
+export async function isEligibleForAgeFeaturesAsync() {
+    return null;
+}
+export async function showSignificantUpdateAcknowledgmentAsync(_updateDescription) {
+    // no-op on web
+}
+export async function getRequiredRegulatoryFeaturesAsync() {
+    return null;
+}
+export async function requestAgeSignalsAccessAsync() {
+    return null;
+}
+export function setFakeAgeSignals(_fake) {
+    // no-op on web
+}
+//# sourceMappingURL=AgeRange.web.js.map
