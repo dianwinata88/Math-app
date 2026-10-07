@@ -34,6 +34,10 @@ export function formatDollars(cents: number): string {
   return `$${Math.floor(cents / 100)}.${String(cents % 100).padStart(2, '0')}`;
 }
 
+export function capitalizeWord(value: string): string {
+  return `${value[0].toUpperCase()}${value.slice(1)}`;
+}
+
 export const jungleAnimals = [
   { singular: 'monkey', plural: 'monkeys', emoji: '🐒' },
   { singular: 'parrot', plural: 'parrots', emoji: '🦜' },

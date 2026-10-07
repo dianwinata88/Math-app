@@ -2,6 +2,7 @@ import { pick, randInt, randInts, shuffle } from '../../core/rng';
 import type { GradeDef } from '../../core/types';
 import { level, matchPairs, mc, numPad, orderSeq, trueFalse } from '../helpers';
 import {
+  capitalizeWord,
   formatCents,
   formatDollars,
   measurementFacts,
@@ -170,7 +171,7 @@ export const grade2: GradeDef = {
           const sameHundreds = rng() < 0.5;
           const b = sameHundreds ? Math.floor(a / 100) * 100 + randInt(rng, 0, 99) : randInt(rng, 100, 999);
           const answer = a < b ? '<' : a > b ? '>' : '=';
-          return mc(`${a} ? ${b}`, answer, ['<', '>', '='].filter((value) => value !== answer), rng, { visual: { text: `${a} ○ ${b}` }, hint: 'Compare hundreds first' });
+          return mc('Which sign goes in the circle?', answer, ['<', '>', '='].filter((value) => value !== answer), rng, { visual: { text: `${a} ○ ${b}` }, hint: 'Compare hundreds first' });
         }),
       ],
     },
@@ -340,12 +341,12 @@ export const grade2: GradeDef = {
         level('g2.data.bar-graph', 'Read a Bar Graph', 'number-pad', 1, (rng) => {
           const rows = shuffle(rng, reefAnimals).slice(0, 3).map((item) => ({ ...item, count: randInt(rng, 1, 10) }));
           const chosen = pick(rng, rows);
-          return numPad(`${rows.map((row) => `${row.emoji} ${'▇'.repeat(row.count)}`).join('\n')}\nHow many ${chosen.plural}?`, chosen.count);
+          return numPad(`${rows.map((row) => `${capitalizeWord(row.plural)}: ${'▇'.repeat(row.count)}`).join('\n')}\nHow many ${chosen.plural}?`, chosen.count);
         }),
         level('g2.data.picture-graph-key', 'Picture Graph Key', 'number-pad', 2, (rng) => {
           const rows = shuffle(rng, reefAnimals).slice(0, 3).map((item) => ({ ...item, count: randInt(rng, 1, 5) }));
           const chosen = pick(rng, rows);
-          return numPad(`Key: each picture = 2\n${rows.map((row) => `${row.emoji} ${row.emoji.repeat(row.count)}`).join('\n')}\nHow many ${chosen.plural}?`, chosen.count * 2, { hint: 'Each picture counts 2' });
+          return numPad(`Key: each picture = 2\n${rows.map((row) => `${capitalizeWord(row.plural)}: ${row.emoji.repeat(row.count)}`).join('\n')}\nHow many ${chosen.plural}?`, chosen.count * 2, { hint: 'Each picture counts 2' });
         }),
         level('g2.data.line-plot', 'Read a Line Plot', 'number-pad', 3, (rng) => {
           const lengths = [2, 3, 4, 5];

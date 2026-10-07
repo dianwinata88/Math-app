@@ -13,6 +13,12 @@ function eachSeed(levelId: string, check: (item: Question) => void): void {
   for (let seed = 1; seed <= 300; seed += 1) check(question(levelId, seed));
 }
 
+function graphRow(line: string): { label: string; value: string } {
+  const match = line.match(/^([A-Z][A-Za-z ]*): (.+)$/);
+  if (!match) throw new Error(`Unrecognized graph row: ${line}`);
+  return { label: match[1], value: match[2] };
+}
+
 function addOrSubtract(expression: string): number {
   const match = expression.match(/^(\d+)(?: ([+−]) (\d+))?$/);
   if (!match) throw new Error(`Unrecognized expression: ${expression}`);
@@ -45,8 +51,22 @@ describe('Grades 1–2 answer math', () => {
         expect(item.answer).toBe(String(addOrSubtract(left) === addOrSubtract(right)));
       });
     }
+    eachSeed('g1.add-sub.fact-match', (item) => {
+      const pairs = item.pairs ?? [];
+      expect(pairs.length).toBeGreaterThanOrEqual(3);
+      expect(pairs.length).toBeLessThanOrEqual(5);
+      expect(new Set(pairs.map((pair) => pair.left)).size).toBe(pairs.length);
+      expect(new Set(pairs.map((pair) => pair.right)).size).toBe(pairs.length);
+      for (const pair of pairs) {
+        const values = [...pair.left.matchAll(/\d+/g)].map((match) => Number(match[0]));
+        const answer = Number(pair.right);
+        expect([...values, answer].every((value) => value >= 0 && value <= 20)).toBe(true);
+        expect(addOrSubtract(pair.left)).toBe(answer);
+      }
+    });
     eachSeed('g1.tens-ones.compare-two-digit', (item) => {
-      const [, a, b] = item.prompt.match(/^(\d+) \? (\d+)$/)!;
+      expect(item.prompt).toBe('Which sign goes in the circle?');
+      const [, a, b] = item.visual?.text?.match(/^(\d+) ○ (\d+)$/)!;
       expect(item.answer).toBe(String(Number(a) < Number(b) ? '<' : Number(a) > Number(b) ? '>' : '='));
     });
   });
@@ -107,12 +127,10 @@ describe('Grades 1–2 answer math', () => {
   it('checks Grade 1 graph totals and tallies', () => {
     eachSeed('g1.data.how-many-more', (item) => {
       const [firstRow, secondRow] = item.prompt.split('\n');
-      const [firstLabel, firstIcons] = firstRow.split(' ');
-      const [secondLabel, secondIcons] = secondRow.split(' ');
-      const bigger = Array.from(firstIcons).length;
-      const smaller = Array.from(secondIcons).length;
-      expect(firstIcons).toBe(firstLabel.repeat(bigger));
-      expect(secondIcons).toBe(secondLabel.repeat(smaller));
+      const first = graphRow(firstRow);
+      const second = graphRow(secondRow);
+      const bigger = Array.from(first.value).length;
+      const smaller = Array.from(second.value).length;
       expect(bigger).toBeGreaterThanOrEqual(2);
       expect(bigger).toBeLessThanOrEqual(10);
       expect(smaller).toBeGreaterThanOrEqual(1);
@@ -121,9 +139,18 @@ describe('Grades 1–2 answer math', () => {
       expect(item.answer).toBe(String(bigger - smaller));
     });
     eachSeed('g1.data.read-tally', (item) => {
-      const tally = item.prompt.split('\n')[0].replace(/^\S+\s/, '');
+      const tally = graphRow(item.prompt.split('\n')[0]).value;
       const count = tally.split(/\s+/).reduce((sum, group) => sum + group.length, 0);
       expect(item.answer).toBe(String(count));
+    });
+    eachSeed('g1.data.picture-graph-most', (item) => {
+      const rows = item.prompt.split('\n').slice(0, -1).map(graphRow);
+      expect(rows).toHaveLength(3);
+    });
+    eachSeed('g1.data.graph-total', (item) => {
+      const rows = item.prompt.split('\n').slice(0, -1).map(graphRow);
+      expect(rows).toHaveLength(3);
+      expect(item.answer).toBe(String(rows.reduce((sum, row) => sum + Number(row.value), 0)));
     });
   });
 
@@ -191,7 +218,8 @@ describe('Grades 1–2 answer math', () => {
       expect(labels.filter((label) => label === item.answer)).toHaveLength(1);
     });
     eachSeed('g2.place-value.compare-three-digit', (item) => {
-      const [, a, b] = item.prompt.match(/^(\d+) \? (\d+)$/)!;
+      expect(item.prompt).toBe('Which sign goes in the circle?');
+      const [, a, b] = item.visual?.text?.match(/^(\d+) ○ (\d+)$/)!;
       expect(item.answer).toBe(String(Number(a) < Number(b) ? '<' : Number(a) > Number(b) ? '>' : '='));
     });
     eachSeed('g2.even-arrays.array-to-addition', (item) => {
@@ -278,14 +306,23 @@ describe('Grades 1–2 answer math', () => {
         turtles: '🐢',
         dolphins: '🐬',
       };
-      const row = lines.slice(1, -1).find((line) => line.startsWith(`${targetEmoji[target]} `))!;
-      const [label, icons] = row.split(' ');
-      const count = Array.from(icons).length;
-      expect(label).toBe(targetEmoji[target]);
-      expect(icons).toBe(label.repeat(count));
+      const targetLabel = `${target[0].toUpperCase()}${target.slice(1)}`;
+      const rows = lines.slice(1, -1).map(graphRow);
+      const row = rows.find((candidate) => candidate.label === targetLabel)!;
+      const count = Array.from(row.value).length;
+      expect(row.value).toBe(targetEmoji[target].repeat(count));
       expect(count).toBeGreaterThanOrEqual(1);
       expect(count).toBeLessThanOrEqual(5);
       expect(item.answer).toBe(String(count * 2));
+    });
+    eachSeed('g2.data.bar-graph', (item) => {
+      const lines = item.prompt.split('\n');
+      const [, target] = lines[lines.length - 1].match(/^How many (.+)\?$/)!;
+      const targetLabel = `${target[0].toUpperCase()}${target.slice(1)}`;
+      const rows = lines.slice(0, -1).map(graphRow);
+      expect(rows).toHaveLength(3);
+      const row = rows.find((candidate) => candidate.label === targetLabel)!;
+      expect(item.answer).toBe(String(Array.from(row.value).length));
     });
     let sawTwoStepStory = false;
     const storyObjectEmojis = new Set<string>();

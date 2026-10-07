@@ -4,6 +4,7 @@ import { level, matchPairs, mc, numPad, orderSeq, trueFalse } from '../helpers';
 import {
   CLOCK_HALF,
   CLOCK_HOUR,
+  capitalizeWord,
   compareSymbol,
   equalShareFacts,
   g1Shapes,
@@ -51,7 +52,7 @@ export const grade1: GradeDef = {
         level('g1.add-sub.fact-match', 'Fact Match', 'match-pairs', 3, (rng) => {
           const answers = randInts(rng, 4, 20, 4);
           const pairs = answers.map((answer, index) => ({
-            left: index % 2 === 0 ? `${answer - 2} + 2` : `${answer + 2} − 2`,
+            left: index % 2 === 0 || answer > 18 ? `${answer - 2} + 2` : `${answer + 2} − 2`,
             right: String(answer),
           }));
           return { ...matchPairs('Match each fact to its answer.', shuffle(rng, pairs)), hint: 'Use addition and subtraction facts together' };
@@ -155,7 +156,7 @@ export const grade1: GradeDef = {
           const a = randInt(rng, 10, 99);
           const b = rng() < 0.17 ? a : randInt(rng, 10, 99);
           const answer = compareSymbol(a, b);
-          return mc(`${a} ? ${b}`, answer, ['<', '>', '='].filter((symbol) => symbol !== answer), rng, { visual: { text: `${a} ○ ${b}` } });
+          return mc('Which sign goes in the circle?', answer, ['<', '>', '='].filter((symbol) => symbol !== answer), rng, { visual: { text: `${a} ○ ${b}` } });
         }),
         level('g1.tens-ones.ten-more-ten-less', 'Ten More or Ten Less', 'number-pad', 2, (rng) => {
           const value = randInt(rng, 10, 99);
@@ -321,7 +322,7 @@ export const grade1: GradeDef = {
           const count = randInt(rng, 1, 15);
           const tally = `${'||||| '.repeat(Math.floor(count / 5))}${'|'.repeat(count % 5)}`.trim();
           const kind = animal(rng);
-          return numPad(`${kind.emoji} ${tally}\nHow many?`, count);
+          return numPad(`${capitalizeWord(kind.plural)}: ${tally}\nHow many?`, count);
         }),
         level('g1.data.picture-graph-most', 'Picture Graph: Most and Fewest', 'multiple-choice', 2, (rng) => {
           const selected = shuffle(rng, jungleAnimals).slice(0, 3);
@@ -329,7 +330,7 @@ export const grade1: GradeDef = {
           const most = rng() < 0.5;
           const targetCount = most ? Math.max(...counts) : Math.min(...counts);
           const index = counts.indexOf(targetCount);
-          const rows = selected.map((item, i) => `${item.emoji}: ${item.emoji.repeat(counts[i])}`);
+          const rows = selected.map((item, i) => `${capitalizeWord(item.plural)}: ${item.emoji.repeat(counts[i])}`);
           return mc(`${rows.join('\n')}\nWhich has the ${most ? 'most' : 'fewest'}?`, selected[index].plural, selected.filter((_, i) => i !== index).map((item) => item.plural), rng);
         }),
         level('g1.data.how-many-more', 'How Many More?', 'number-pad', 2, (rng) => {
@@ -338,11 +339,11 @@ export const grade1: GradeDef = {
           const difference = randInt(rng, 1, 5);
           const smaller = randInt(rng, 1, 10 - difference);
           const bigger = smaller + difference;
-          return numPad(`${first.emoji} ${first.emoji.repeat(bigger)}\n${second.emoji} ${second.emoji.repeat(smaller)}\nHow many more ${first.plural} than ${second.plural}?`, difference);
+          return numPad(`${capitalizeWord(first.plural)}: ${first.emoji.repeat(bigger)}\n${capitalizeWord(second.plural)}: ${second.emoji.repeat(smaller)}\nHow many more ${first.plural} than ${second.plural}?`, difference);
         }),
         level('g1.data.graph-total', 'Add the Graph Rows', 'number-pad', 3, (rng) => {
           const rows = shuffle(rng, jungleAnimals).slice(0, 3).map((item) => ({ ...item, count: randInt(rng, 1, 9) }));
-          return numPad(`${rows.map((row) => `${row.emoji}: ${row.count}`).join('\n')}\nHow many animals in all?`, rows.reduce((sum, row) => sum + row.count, 0), { hint: 'Add the rows together' });
+          return numPad(`${rows.map((row) => `${capitalizeWord(row.plural)}: ${row.count}`).join('\n')}\nHow many animals in all?`, rows.reduce((sum, row) => sum + row.count, 0), { hint: 'Add the rows together' });
         }),
       ],
     },
