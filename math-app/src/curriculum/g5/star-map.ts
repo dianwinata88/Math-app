@@ -61,7 +61,7 @@ export const starMap: UnitDef = {
       while (right === up) up = randInt(rng, 1, 4);
       while (startX + right === startY + up) startY = randInt(rng, 2, 6);
       const movedPoint = `(${startX + right}, ${startY + up})`;
-      return mc(`Station is at (${startX}, ${startY}). Move ${right} right and ${up} up. Which ordered pair marks the station?`, movedPoint, [
+      return mc(`Station is at (${startX}, ${startY}). Move ${right} right and ${up} up. What is the new point?`, movedPoint, [
         `(${startX + up}, ${startY + right})`, `(${startX + right - 1}, ${startY + up})`,
         startX - right >= 0 ? `(${startX - right}, ${startY + up})` : `(${startX + right}, ${startY + up + 1})`,
       ], rng);
