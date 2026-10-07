@@ -72,10 +72,53 @@ describe('Grades 1–2 answer math', () => {
     });
   });
 
+  it('checks Grade 1 measurement wording and shape choices', () => {
+    eachSeed('g1.measure.measure-units', (item) => {
+      const unit = item.visual?.emoji === '📎' ? 'paper clips' : 'cubes';
+      expect(item.prompt).toBe(`The snake is this many ${unit} long. How long?`);
+    });
+    eachSeed('g1.measure.longer-shorter', (item) => {
+      const [, adjective, choices] = item.prompt.match(/^Which is the (longest|shortest)\? (.+)$/)!;
+      const labels = choices.split(', ');
+      const lengths = labels.map((label) => Number(label.match(/\((\d+) cubes\)$/)![1]));
+      expect(labels.every((label) => /^(monkey|parrot|frog|tiger|elephant|giraffe|zebra|snake) \(\d+ cubes\)$/.test(label))).toBe(true);
+      expect(item.answer).toBe(labels[lengths.indexOf(adjective === 'longest' ? Math.max(...lengths) : Math.min(...lengths))]);
+    });
+    eachSeed('g1.measure.compare-indirect', (item) => {
+      const [, first, second, secondAgain, third, conclusionFirst, conclusionLast] = item.prompt.match(
+        /^The (\w+) is longer than the (\w+)\. The (\w+) is longer than the (\w+)\. So the (\w+) is longer than the (\w+)\.$/,
+      )!;
+      expect(secondAgain).toBe(second);
+      expect([conclusionFirst, conclusionLast]).toEqual(item.answer === 'true' ? [first, third] : [third, first]);
+      expect(item.hint).toBeTruthy();
+    });
+    const threeDimensional = ['cube', 'cone', 'cylinder', 'sphere'];
+    const twoDimensional = ['triangle', 'square', 'rectangle', 'circle', 'hexagon', 'trapezoid'];
+    eachSeed('g1.shapes.name-the-shape', (item) => {
+      const labels = (item.options ?? []).map((option) => option.label);
+      const allowed = threeDimensional.includes(item.answer) ? threeDimensional : twoDimensional;
+      expect(labels).toHaveLength(4);
+      expect(new Set(labels).size).toBe(4);
+      expect(labels).toContain(item.answer);
+      expect(labels.every((label) => allowed.includes(label))).toBe(true);
+    });
+  });
+
   it('checks Grade 1 graph totals and tallies', () => {
     eachSeed('g1.data.how-many-more', (item) => {
-      const counts = [...item.prompt.matchAll(/^.+: (\d+)$/gm)].map((match) => Number(match[1]));
-      expect(item.answer).toBe(String(counts[0] - counts[1]));
+      const [firstRow, secondRow] = item.prompt.split('\n');
+      const [firstLabel, firstIcons] = firstRow.split(' ');
+      const [secondLabel, secondIcons] = secondRow.split(' ');
+      const bigger = Array.from(firstIcons).length;
+      const smaller = Array.from(secondIcons).length;
+      expect(firstIcons).toBe(firstLabel.repeat(bigger));
+      expect(secondIcons).toBe(secondLabel.repeat(smaller));
+      expect(bigger).toBeGreaterThanOrEqual(2);
+      expect(bigger).toBeLessThanOrEqual(10);
+      expect(smaller).toBeGreaterThanOrEqual(1);
+      expect(bigger - smaller).toBeGreaterThanOrEqual(1);
+      expect(bigger - smaller).toBeLessThanOrEqual(5);
+      expect(item.answer).toBe(String(bigger - smaller));
     });
     eachSeed('g1.data.read-tally', (item) => {
       const tally = item.prompt.split('\n')[0].replace(/^\S+\s/, '');
@@ -107,6 +150,28 @@ describe('Grades 1–2 answer math', () => {
   });
 
   it('checks Grade 2 place-value and array pairs', () => {
+    eachSeed('g2.fluency.fact-family-match', (item) => {
+      const pairs = item.pairs ?? [];
+      expect(pairs).toHaveLength(3);
+      expect(new Set(pairs.map((pair) => pair.left)).size).toBe(3);
+      expect(new Set(pairs.map((pair) => pair.right)).size).toBe(3);
+      const families = pairs.map((pair) => {
+        const [, aText, bText, totalText] = pair.left.match(/^(\d+) \+ (\d+) = (\d+)$/)!;
+        const [, rightTotalText, subtrahendText, resultText] = pair.right.match(/^(\d+) − (\d+) = (\d+)$/)!;
+        const a = Number(aText);
+        const b = Number(bText);
+        const total = Number(totalText);
+        const rightTotal = Number(rightTotalText);
+        const subtrahend = Number(subtrahendText);
+        const result = Number(resultText);
+        expect(a + b).toBe(total);
+        expect(total).toBeLessThanOrEqual(20);
+        expect(rightTotal).toBe(total);
+        expect([[a, b], [b, a]]).toContainEqual([subtrahend, result]);
+        return [a, b, total].sort((left, right) => left - right).join(',');
+      });
+      expect(new Set(families).size).toBe(3);
+    });
     eachSeed('g2.place-value.hundreds-tens-ones', (item) => {
       const [, hundreds, tens, ones] = item.prompt.match(/^(\d+) hundreds, (\d+) tens, (\d+) ones$/)!;
       expect(item.answer).toBe(String(Number(hundreds) * 100 + Number(tens) * 10 + Number(ones)));
@@ -120,6 +185,10 @@ describe('Grades 1–2 answer math', () => {
       const [, number, digit] = item.prompt.match(/^In (\d+), what is the value of the (\d+)\?$/)!;
       const position = number.indexOf(digit);
       expect(item.answer).toBe(String(Number(digit) * 10 ** (number.length - position - 1)));
+      const labels = (item.options ?? []).map((option) => option.id);
+      expect(labels).toHaveLength(4);
+      expect(new Set(labels).size).toBe(4);
+      expect(labels.filter((label) => label === item.answer)).toHaveLength(1);
     });
     eachSeed('g2.place-value.compare-three-digit', (item) => {
       const [, a, b] = item.prompt.match(/^(\d+) \? (\d+)$/)!;
@@ -136,12 +205,20 @@ describe('Grades 1–2 answer math', () => {
 
   it('checks Grade 2 money and time answers', () => {
     eachSeed('g2.money.count-coins', (item) => {
-      const [, quarters, dimes, nickels, pennies] = item.prompt.match(/^(\d+) quarters, (\d+) dimes, (\d+) nickels, (\d+) pennies/m)!;
+      const [, quarters, quarterWord, dimes, dimeWord, nickels, nickelWord, pennies, pennyWord] = item.prompt.match(
+        /^(\d+) (quarter|quarters), (\d+) (dime|dimes), (\d+) (nickel|nickels), (\d+) (penny|pennies)\nHow many cents\?$/,
+      )!;
+      expect(quarterWord).toBe(Number(quarters) === 1 ? 'quarter' : 'quarters');
+      expect(dimeWord).toBe(Number(dimes) === 1 ? 'dime' : 'dimes');
+      expect(nickelWord).toBe(Number(nickels) === 1 ? 'nickel' : 'nickels');
+      expect(pennyWord).toBe(Number(pennies) === 1 ? 'penny' : 'pennies');
       const cents = Number(quarters) * 25 + Number(dimes) * 10 + Number(nickels) * 5 + Number(pennies);
       expect(item.answer).toBe(String(cents));
     });
     eachSeed('g2.money.dollars-and-cents', (item) => {
-      const [, dollars, dimes] = item.prompt.match(/^(\d+) dollars and (\d+) dimes/)!;
+      const [, dollars, dollarWord, dimes, dimeWord] = item.prompt.match(/^(\d+) (dollar|dollars) and (\d+) (dime|dimes) is how much\?$/)!;
+      expect(dollarWord).toBe(Number(dollars) === 1 ? 'dollar' : 'dollars');
+      expect(dimeWord).toBe(Number(dimes) === 1 ? 'dime' : 'dimes');
       const cents = Number(dollars) * 100 + Number(dimes) * 10;
       expect(item.answer).toBe(`$${Math.floor(cents / 100)}.${String(cents % 100).padStart(2, '0')}`);
     });
@@ -150,7 +227,8 @@ describe('Grades 1–2 answer math', () => {
       expect(item.answer).toBe(String(Number(paid) - Number(price)));
     });
     eachSeed('g2.time.read-the-clock', (item) => {
-      const [, hour, hand] = item.prompt.match(/hour hand is just past (\d+)\. The minute hand is on the (\d+)/)!;
+      const [, hour, nextHour, hand] = item.prompt.match(/hour hand is between the (\d+) and the (\d+)\. The minute hand is on the (\d+)/)!;
+      expect(Number(nextHour)).toBe(Number(hour) + 1);
       expect(item.answer).toBe(`${hour}:${String(Number(hand) * 5).padStart(2, '0')}`);
     });
     eachSeed('g2.time.minutes-later', (item) => {
@@ -162,18 +240,84 @@ describe('Grades 1–2 answer math', () => {
   });
 
   it('checks Grade 2 measurement, graphs, arrays, and faces', () => {
+    const estimatedObjects = new Set<string>();
+    eachSeed('g2.measure.best-estimate', (item) => {
+      const [, object] = item.prompt.match(/^About how long is (.+)\?$/)!;
+      estimatedObjects.add(object);
+      const labels = (item.options ?? []).map((option) => option.label);
+      expect(labels).toHaveLength(4);
+      expect(new Set(labels).size).toBe(4);
+      expect(labels).toContain(item.answer);
+      expect(labels.every((label) => /(?:mm|cm|in|ft|m)$/.test(label))).toBe(true);
+    });
+    expect(estimatedObjects.size).toBeGreaterThanOrEqual(8);
     eachSeed('g2.measure.ruler-read', (item) => {
       const [, start, end] = item.prompt.match(/starts at (\d+) and ends at (\d+)/)!;
       expect(item.answer).toBe(String(Number(end) - Number(start)));
     });
+    eachSeed('g2.measure.how-much-longer', (item) => {
+      const [, first, firstLength, second, secondLength, asked] = item.prompt.match(
+        /^A (\w+) is (\d+) cm long\. A (\w+) is (\d+) cm long\. How much longer is the (\w+)\?$/,
+      )!;
+      expect(['fish', 'crab', 'shell', 'starfish', 'octopus', 'turtle', 'dolphin']).toContain(first);
+      expect(['fish', 'crab', 'shell', 'starfish', 'octopus', 'turtle', 'dolphin']).toContain(second);
+      expect(asked).toBe(first);
+      expect(Number(firstLength)).toBeGreaterThan(Number(secondLength));
+      expect(item.answer).toBe(String(Number(firstLength) - Number(secondLength)));
+    });
     eachSeed('g2.data.picture-graph-key', (item) => {
       const lines = item.prompt.split('\n');
-      const [, target] = lines[lines.length - 1].match(/for (.+)\?$/)!;
-      const row = lines.slice(1, -1).find((line) => line.startsWith(`${target}:`))!;
-      const icons = row.split(': ')[1];
-      expect(icons).toBe('🐟'.repeat(Array.from(icons).length));
-      expect(item.answer).toBe(String(Array.from(icons).length * 2));
+      expect(lines[0]).toBe('Key: each picture = 2');
+      const [, target] = lines[lines.length - 1].match(/^How many (.+)\?$/)!;
+      const targetEmoji: Record<string, string> = {
+        fish: '🐠',
+        crabs: '🦀',
+        shells: '🐚',
+        starfish: '⭐',
+        octopuses: '🐙',
+        turtles: '🐢',
+        dolphins: '🐬',
+      };
+      const row = lines.slice(1, -1).find((line) => line.startsWith(`${targetEmoji[target]} `))!;
+      const [label, icons] = row.split(' ');
+      const count = Array.from(icons).length;
+      expect(label).toBe(targetEmoji[target]);
+      expect(icons).toBe(label.repeat(count));
+      expect(count).toBeGreaterThanOrEqual(1);
+      expect(count).toBeLessThanOrEqual(5);
+      expect(item.answer).toBe(String(count * 2));
     });
+    let sawTwoStepStory = false;
+    const storyObjectEmojis = new Set<string>();
+    eachSeed('g2.within-100.reef-stories', (item) => {
+      const values = [...item.prompt.matchAll(/\b(\d+)\b/g)].map((match) => Number(match[1]));
+      const hasSecondStep = values.length === 3;
+      if (hasSecondStep) sawTwoStepStory = true;
+      for (const emoji of ['⚽', '🚀', '🧁', '🐚']) {
+        if (item.prompt.includes(emoji)) storyObjectEmojis.add(emoji);
+      }
+      const hasAddition = item.prompt.includes('swim over') || item.prompt.includes('more arrive');
+      const hasSubtraction = item.prompt.includes('swim away') || item.prompt.includes('given away');
+      const expected = hasSecondStep
+        ? values[0] + values[1] - values[2]
+        : hasAddition
+          ? values[0] + values[1]
+          : values[0] - values[1];
+      expect(values[0] + (hasAddition || hasSecondStep ? values[1] : 0)).toBeLessThanOrEqual(100);
+      if (hasSecondStep || hasSubtraction) expect(expected).toBeGreaterThanOrEqual(0);
+      expect(expected).toBeLessThanOrEqual(100);
+      expect(item.answer).toBe(String(expected));
+      const options = (item.options ?? []).map((option) => Number(option.id));
+      expect(options).toHaveLength(4);
+      expect(new Set(options).size).toBe(4);
+      expect(options.every((value) => value >= 0)).toBe(true);
+      expect(options.every((value) => value <= 100)).toBe(true);
+      expect(options.filter((value) => value === expected)).toHaveLength(1);
+      const animalAction = item.prompt.match(/\b(\d+) (\w+) (swims|swim) (over|away)/);
+      if (animalAction) expect(animalAction[3]).toBe(Number(animalAction[1]) === 1 ? 'swims' : 'swim');
+    });
+    expect(sawTwoStepStory).toBe(true);
+    expect(storyObjectEmojis.size).toBe(4);
     eachSeed('g2.data.line-plot', (item) => {
       const lines = item.prompt.split('\n');
       const questionLine = lines[lines.length - 1];

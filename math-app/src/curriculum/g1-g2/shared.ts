@@ -35,14 +35,14 @@ export function formatDollars(cents: number): string {
 }
 
 export const jungleAnimals = [
-  { plural: 'monkeys', emoji: '🐒' },
-  { plural: 'parrots', emoji: '🦜' },
-  { plural: 'frogs', emoji: '🐸' },
-  { plural: 'tigers', emoji: '🐯' },
-  { plural: 'elephants', emoji: '🐘' },
-  { plural: 'giraffes', emoji: '🦒' },
-  { plural: 'zebras', emoji: '🦓' },
-  { plural: 'snakes', emoji: '🐍' },
+  { singular: 'monkey', plural: 'monkeys', emoji: '🐒' },
+  { singular: 'parrot', plural: 'parrots', emoji: '🦜' },
+  { singular: 'frog', plural: 'frogs', emoji: '🐸' },
+  { singular: 'tiger', plural: 'tigers', emoji: '🐯' },
+  { singular: 'elephant', plural: 'elephants', emoji: '🐘' },
+  { singular: 'giraffe', plural: 'giraffes', emoji: '🦒' },
+  { singular: 'zebra', plural: 'zebras', emoji: '🦓' },
+  { singular: 'snake', plural: 'snakes', emoji: '🐍' },
 ];
 
 export const jungleFoods = [
@@ -52,19 +52,19 @@ export const jungleFoods = [
 ];
 
 export const reefAnimals = [
-  { plural: 'fish', emoji: '🐠' },
-  { plural: 'crabs', emoji: '🦀' },
-  { plural: 'shells', emoji: '🐚' },
-  { plural: 'starfish', emoji: '⭐' },
-  { plural: 'octopuses', emoji: '🐙' },
-  { plural: 'turtles', emoji: '🐢' },
-  { plural: 'dolphins', emoji: '🐬' },
+  { singular: 'fish', plural: 'fish', emoji: '🐠' },
+  { singular: 'crab', plural: 'crabs', emoji: '🦀' },
+  { singular: 'shell', plural: 'shells', emoji: '🐚' },
+  { singular: 'starfish', plural: 'starfish', emoji: '⭐' },
+  { singular: 'octopus', plural: 'octopuses', emoji: '🐙' },
+  { singular: 'turtle', plural: 'turtles', emoji: '🐢' },
+  { singular: 'dolphin', plural: 'dolphins', emoji: '🐬' },
 ];
 
 export const g1Shapes = [
   { name: 'triangle', riddle: 'I have 3 straight sides and 3 corners.', sides: 3 },
   { name: 'square', riddle: 'I have 4 equal sides and 4 corners.', sides: 4 },
-  { name: 'rectangle', riddle: 'I have 4 sides and 4 corners. Opposite sides match.', sides: 4 },
+  { name: 'rectangle', riddle: 'I have 4 square corners. Two sides are long and two are short.', sides: 4 },
   { name: 'circle', riddle: 'I am round and have no straight sides.', sides: 0 },
   { name: 'hexagon', riddle: 'I have 6 straight sides and 6 corners.', sides: 6 },
   { name: 'trapezoid', riddle: 'I have 4 sides and one pair of parallel sides.', sides: 4 },

@@ -13,6 +13,8 @@ import {
 } from './shared';
 
 const animal = (rng: () => number) => pick(rng, jungleAnimals);
+const threeDimensionalShapeNames = new Set(['cube', 'cone', 'cylinder', 'sphere']);
+const twoDimensionalShapeNames = ['triangle', 'square', 'rectangle', 'circle', 'hexagon', 'trapezoid'];
 
 export const grade1: GradeDef = {
   id: 'g1',
@@ -205,8 +207,9 @@ export const grade1: GradeDef = {
         level('g1.measure.measure-units', 'Measure with Units', 'count-tap', 1, (rng) => {
           const count = randInt(rng, 2, 9);
           const emoji = rng() < 0.5 ? '📎' : '🟩';
+          const unit = emoji === '📎' ? 'paper clips' : 'cubes';
           return {
-            ...mc('The snake is this many paper clips long. How long?', String(count), numericDistractors(rng, count, [count - 1, count + 1, count + 2], { min: 0, max: 12 }), rng),
+            ...mc(`The snake is this many ${unit} long. How long?`, String(count), numericDistractors(rng, count, [count - 1, count + 1, count + 2], { min: 0, max: 12 }), rng),
             kind: 'count-tap',
             visual: { emoji, count },
           };
@@ -216,8 +219,8 @@ export const grade1: GradeDef = {
           const lengths = randInts(rng, 2, 12, 3);
           const askLonger = rng() < 0.5;
           const winner = selected[lengths.indexOf(askLonger ? Math.max(...lengths) : Math.min(...lengths))];
-          const labels = selected.map((item, index) => `${item.plural} (${lengths[index]} cubes)`);
-          return mc(`Which animal is ${askLonger ? 'longer' : 'shorter'}? ${labels.join(', ')}`, labels[selected.indexOf(winner)], labels.filter((label) => label !== labels[selected.indexOf(winner)]), rng, {
+          const labels = selected.map((item, index) => `${item.singular} (${lengths[index]} cubes)`);
+          return mc(`Which is the ${askLonger ? 'longest' : 'shortest'}? ${labels.join(', ')}`, labels[selected.indexOf(winner)], labels.filter((label) => label !== labels[selected.indexOf(winner)]), rng, {
             visual: { items: selected.map((item) => item.emoji) },
           });
         }),
@@ -232,10 +235,10 @@ export const grade1: GradeDef = {
           const animals = shuffle(rng, jungleAnimals).slice(0, 3);
           const [first, second, third] = animals;
           const truth = rng() < 0.5;
-          const question = truth
-            ? `Is ${first.plural} longer than ${third.plural}?`
-            : `Is ${third.plural} longer than ${first.plural}?`;
-          return trueFalse(`${first.plural} are longer than ${second.plural}. ${second.plural} are longer than ${third.plural}. ${question}`, truth, { hint: 'Compare the lengths of the first and last' });
+          const conclusion = truth
+            ? `the ${first.singular} is longer than the ${third.singular}`
+            : `the ${third.singular} is longer than the ${first.singular}`;
+          return trueFalse(`The ${first.singular} is longer than the ${second.singular}. The ${second.singular} is longer than the ${third.singular}. So ${conclusion}.`, truth, { hint: 'Compare the lengths of the first and last' });
         }),
       ],
     },
@@ -286,9 +289,10 @@ export const grade1: GradeDef = {
       levels: [
         level('g1.shapes.name-the-shape', 'Name the Shape', 'multiple-choice', 1, (rng) => {
           const shape = pick(rng, g1Shapes);
-          const labels = ['triangle', 'square', 'rectangle', 'circle', 'hexagon', 'trapezoid'];
-          const options = [shape.name, ...shuffle(rng, labels.filter((label) => label !== shape.name)).slice(0, 3)];
-          return mc(shape.riddle, shape.name, options.filter((label) => label !== shape.name), rng);
+          const labels = threeDimensionalShapeNames.has(shape.name)
+            ? [...threeDimensionalShapeNames]
+            : twoDimensionalShapeNames;
+          return mc(shape.riddle, shape.name, shuffle(rng, labels.filter((label) => label !== shape.name)).slice(0, 3), rng);
         }),
         level('g1.shapes.count-sides', 'Count Sides and Corners', 'number-pad', 1, (rng) => {
           const shape = pick(rng, g1Shapes.filter((item) => ['triangle', 'square', 'rectangle', 'hexagon', 'trapezoid'].includes(item.name)));
@@ -331,9 +335,10 @@ export const grade1: GradeDef = {
         level('g1.data.how-many-more', 'How Many More?', 'number-pad', 2, (rng) => {
           const first = animal(rng);
           const second = pick(rng, jungleAnimals.filter((item) => item !== first));
-          const low = randInt(rng, 1, 10);
-          const difference = randInt(rng, 1, 8);
-          return numPad(`${first.emoji}: ${low + difference}\n${second.emoji}: ${low}\nHow many more ${first.plural} than ${second.plural}?`, difference);
+          const difference = randInt(rng, 1, 5);
+          const smaller = randInt(rng, 1, 10 - difference);
+          const bigger = smaller + difference;
+          return numPad(`${first.emoji} ${first.emoji.repeat(bigger)}\n${second.emoji} ${second.emoji.repeat(smaller)}\nHow many more ${first.plural} than ${second.plural}?`, difference);
         }),
         level('g1.data.graph-total', 'Add the Graph Rows', 'number-pad', 3, (rng) => {
           const rows = shuffle(rng, jungleAnimals).slice(0, 3).map((item) => ({ ...item, count: randInt(rng, 1, 9) }));

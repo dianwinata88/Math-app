@@ -10,7 +10,13 @@ import {
 } from './shared';
 
 const formatTime = (hour: number, minute: number) => `${hour}:${String(minute).padStart(2, '0')}`;
-const reefAnimal = (rng: () => number) => pick(rng, reefAnimals);
+const nounWithCount = (count: number, item: { singular: string; plural: string }) => `${count} ${count === 1 ? item.singular : item.plural}`;
+const reefStoryObjects = [
+  { singular: 'soccer ball', plural: 'soccer balls', emoji: '⚽' },
+  { singular: 'rocket', plural: 'rockets', emoji: '🚀' },
+  { singular: 'cupcake', plural: 'cupcakes', emoji: '🧁' },
+  { singular: 'shell', plural: 'shells', emoji: '🐚' },
+];
 
 export const grade2: GradeDef = {
   id: 'g2',
@@ -35,13 +41,15 @@ export const grade2: GradeDef = {
           return numPad(`${a} − ${b} = ?`, a - b, { visual: { text: `${a} − ${b} =` } });
         }),
         level('g2.fluency.fact-family-match', 'Fact Family Match', 'match-pairs', 2, (rng) => {
-          const results = randInts(rng, 1, 20, 4);
-          const pairs = results.map((result, index) => {
-            const amount = Math.min(result, randInt(rng, 1, Math.max(1, result)));
-            const left = index % 2 === 0 ? `${result - amount} + ${amount}` : `${result + amount} − ${amount}`;
-            return { left, right: String(result) };
+          const results = randInts(rng, 3, 20, 3);
+          const pairs = results.map((result) => {
+            const a = randInt(rng, 1, result - 1);
+            const b = result - a;
+            const left = `${a} + ${b} = ${result}`;
+            const right = rng() < 0.5 ? `${result} − ${b} = ${a}` : `${result} − ${a} = ${b}`;
+            return { left, right };
           });
-          return matchPairs('Match each fact to its answer.', shuffle(rng, pairs));
+          return matchPairs('Match each addition fact to its related subtraction fact.', shuffle(rng, pairs));
         }),
       ],
     },
@@ -70,16 +78,38 @@ export const grade2: GradeDef = {
           return numPad(`${a} − ${b} = ?`, a - b, { visual: { text: `${a} − ${b} =` }, hint: 'Trade a ten for 10 ones' });
         }),
         level('g2.within-100.reef-stories', 'Reef Stories', 'multiple-choice', 2, (rng) => {
-          const first = reefAnimal(rng);
-          const second = reefAnimal(rng);
+          const animals = shuffle(rng, reefAnimals.filter((item) => item.singular !== 'shell')).slice(0, 3);
+          const [first, second, third] = animals;
+          const objects = pick(rng, reefStoryObjects);
+          const twoStep = rng() < 0.25;
           const a = randInt(rng, 10, 45);
-          const add = rng() < 0.5;
-          const b = add ? randInt(rng, 5, 30) : randInt(rng, 1, a);
-          const answer = add ? a + b : a - b;
-          const prompt = add
-            ? `A reef has ${a} ${first.plural} and ${b} ${second.plural} arrive. How many now?`
-            : `There are ${a} ${first.plural}. ${b} swim away. How many remain?`;
-          return mc(prompt, String(answer), numericDistractors(rng, answer, [add ? a - b : a + b, answer - 10, answer + 10, answer - 1], { min: 0, max: 100 }), rng);
+          let answer: number;
+          let prompt: string;
+          let wrongOperation: number;
+          if (twoStep) {
+            const b = randInt(rng, 5, 30);
+            const c = randInt(rng, 1, a + b);
+            answer = a + b - c;
+            prompt = rng() < 0.5
+              ? `A reef has ${nounWithCount(a, first)}. ${nounWithCount(b, second)} ${b === 1 ? 'swims' : 'swim'} over. ${nounWithCount(c, third)} ${c === 1 ? 'swims' : 'swim'} away. How many animals now?`
+              : `There are ${a} ${objects.plural} ${objects.emoji}. ${b} more arrive. ${c} are given away. How many ${objects.plural} now?`;
+            wrongOperation = a + b;
+          } else if (rng() < 0.5) {
+            const b = randInt(rng, 5, 30);
+            answer = a + b;
+            prompt = rng() < 0.5
+              ? `A reef has ${nounWithCount(a, first)}. ${nounWithCount(b, second)} ${b === 1 ? 'swims' : 'swim'} over. How many animals now?`
+              : `There are ${a} ${objects.plural} ${objects.emoji}. ${b} more arrive. How many ${objects.plural} now?`;
+            wrongOperation = Math.abs(a - b);
+          } else {
+            const b = randInt(rng, 1, a);
+            answer = a - b;
+            prompt = rng() < 0.5
+              ? `A reef has ${nounWithCount(a, first)}. ${nounWithCount(b, first)} ${b === 1 ? 'swims' : 'swim'} away. How many ${first.plural} remain?`
+              : `There are ${a} ${objects.plural} ${objects.emoji}. ${b} are given away. How many ${objects.plural} remain?`;
+            wrongOperation = a + b;
+          }
+          return mc(prompt, String(answer), numericDistractors(rng, answer, [wrongOperation, answer - 10, answer + 10, answer - 1, answer + 1], { min: 0, max: 100 }), rng);
         }),
         level('g2.within-100.add-within-1000', 'Add Within 1,000', 'number-pad', 3, (rng) => {
           const a = randInt(rng, 100, 699);
@@ -127,7 +157,13 @@ export const grade2: GradeDef = {
           const digits = [hundreds, tens, ones];
           const value = digits[place] * [100, 10, 1][place];
           const number = hundreds * 100 + tens * 10 + ones;
-          return mc(`In ${number}, what is the value of the ${digits[place]}?`, String(value), [String(digits[place]), String(digits[place] * (place === 0 ? 10 : 100)), String(digits[(place + 1) % 3] * [100, 10, 1][(place + 1) % 3])], rng);
+          const otherPlace = place === 0 ? 1 : place === 1 ? 2 : 0;
+          const distractors = place === 2
+            ? [digits[place] * 10, digits[place] * 100, digits[otherPlace] * [100, 10, 1][otherPlace]]
+            : place === 1
+              ? [digits[place], digits[place] * 100, digits[otherPlace] * [100, 10, 1][otherPlace]]
+              : [digits[place], digits[place] * 10, digits[otherPlace] * [100, 10, 1][otherPlace]];
+          return mc(`In ${number}, what is the value of the ${digits[place]}?`, String(value), distractors.map(String), rng);
         }),
         level('g2.place-value.compare-three-digit', 'Compare Three-Digit Numbers', 'multiple-choice', 3, (rng) => {
           const a = randInt(rng, 100, 999);
@@ -192,7 +228,8 @@ export const grade2: GradeDef = {
           const nickels = randInt(rng, 0, 3);
           const pennies = randInt(rng, 0, 4);
           const answer = quarters * 25 + dimes * 10 + nickels * 5 + pennies;
-          const prompt = `${quarters} quarters, ${dimes} dimes, ${nickels} nickels, ${pennies} pennies\nHow many cents?`;
+          const coinCount = (count: number, singular: string, plural: string) => `${count} ${count === 1 ? singular : plural}`;
+          const prompt = `${coinCount(quarters, 'quarter', 'quarters')}, ${coinCount(dimes, 'dime', 'dimes')}, ${coinCount(nickels, 'nickel', 'nickels')}, ${coinCount(pennies, 'penny', 'pennies')}\nHow many cents?`;
           return numPad(prompt, answer, { hint: 'Add the value of each coin' });
         }),
         level('g2.money.dollars-and-cents', 'Dollars and Cents', 'multiple-choice', 2, (rng) => {
@@ -201,7 +238,7 @@ export const grade2: GradeDef = {
           const answer = dollars * 100 + dimes * 10;
           const candidates = [dollars * 100 + dimes, (dollars + dimes) * 100, answer + 100, answer - 10, answer + 10];
           const labels = numericDistractors(rng, answer, candidates, { count: 3, min: 0, max: 999 }).map((value) => formatDollars(Number(value)));
-          return mc(`${dollars} dollars and ${dimes} dimes is how much?`, formatDollars(answer), labels, rng);
+          return mc(`${dollars} ${dollars === 1 ? 'dollar' : 'dollars'} and ${dimes} ${dimes === 1 ? 'dime' : 'dimes'} is how much?`, formatDollars(answer), labels, rng);
         }),
         level('g2.money.make-change', 'Make Change', 'number-pad', 3, (rng) => {
           const paid = rng() < 0.5 ? 50 : 100;
@@ -227,7 +264,7 @@ export const grade2: GradeDef = {
           const minute = minuteHand * 5;
           const answer = formatTime(hour, minute);
           const labels = [answer, formatTime(hour, minuteHand), formatTime(hour === 11 ? 12 : hour + 1, minute), formatTime(minuteHand, 20)];
-          return mc(`The hour hand is just past ${hour}. The minute hand is on the ${minuteHand}. What time is it?`, answer, [...new Set(labels.filter((label) => label !== answer))].slice(0, 3), rng);
+          return mc(`The hour hand is between the ${hour} and the ${hour + 1}. The minute hand is on the ${minuteHand}. What time is it?`, answer, [...new Set(labels.filter((label) => label !== answer))].slice(0, 3), rng);
         }),
         level('g2.time.am-pm', 'AM or PM?', 'multiple-choice', 2, (rng) => {
           const activities = [
@@ -264,6 +301,13 @@ export const grade2: GradeDef = {
             { object: 'a crayon', answer: '9 cm', distractors: ['90 cm', '9 m', '1 cm'] },
             { object: 'a pencil', answer: '7 in', distractors: ['7 cm', '70 in', '7 ft'] },
             { object: 'a door', answer: '2 m', distractors: ['2 cm', '20 m', '2 ft'] },
+            { object: 'a paper clip', answer: '3 cm', distractors: ['30 cm', '3 m', '3 mm'] },
+            { object: 'a school bus', answer: '12 m', distractors: ['12 cm', '120 m', '12 ft'] },
+            { object: 'a book', answer: '10 in', distractors: ['10 cm', '100 in', '10 ft'] },
+            { object: 'a shoe', answer: '25 cm', distractors: ['25 in', '250 cm', '25 m'] },
+            { object: 'a spoon', answer: '15 cm', distractors: ['15 mm', '150 cm', '15 m'] },
+            { object: 'a desk', answer: '1 m', distractors: ['1 cm', '10 m', '1 in'] },
+            { object: 'a baby whale', answer: '4 m', distractors: ['4 cm', '40 m', '4 ft'] },
           ];
           const item = pick(rng, estimates);
           return mc(`About how long is ${item.object}?`, item.answer, item.distractors, rng);
@@ -283,7 +327,7 @@ export const grade2: GradeDef = {
           const a = randInt(rng, 25, 99);
           const difference = randInt(rng, 5, 25);
           const b = a - difference;
-          return numPad(`A ${first.plural} is ${a} cm long. A ${second.plural} is ${b} cm long. How much longer is the ${first.plural}?`, difference, { hint: 'Subtract the shorter length' });
+          return numPad(`A ${first.singular} is ${a} cm long. A ${second.singular} is ${b} cm long. How much longer is the ${first.singular}?`, difference, { hint: 'Subtract the shorter length' });
         }),
       ],
     },
@@ -301,7 +345,7 @@ export const grade2: GradeDef = {
         level('g2.data.picture-graph-key', 'Picture Graph Key', 'number-pad', 2, (rng) => {
           const rows = shuffle(rng, reefAnimals).slice(0, 3).map((item) => ({ ...item, count: randInt(rng, 1, 5) }));
           const chosen = pick(rng, rows);
-          return numPad(`Each 🐟 = 2 fish\n${rows.map((row) => `${row.emoji}: ${'🐟'.repeat(row.count)}`).join('\n')}\nHow many fish are shown for ${chosen.emoji}?`, chosen.count * 2, { hint: 'Each picture counts 2' });
+          return numPad(`Key: each picture = 2\n${rows.map((row) => `${row.emoji} ${row.emoji.repeat(row.count)}`).join('\n')}\nHow many ${chosen.plural}?`, chosen.count * 2, { hint: 'Each picture counts 2' });
         }),
         level('g2.data.line-plot', 'Read a Line Plot', 'number-pad', 3, (rng) => {
           const lengths = [2, 3, 4, 5];
