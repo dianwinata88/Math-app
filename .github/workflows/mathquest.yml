@@ -1,0 +1,32 @@
+name: MathQuest
+
+on:
+  pull_request:
+    paths:
+      - 'math-app/**'
+      - '.github/workflows/mathquest.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'math-app/**'
+      - '.github/workflows/mathquest.yml'
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: math-app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: math-app/package-lock.json
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm test -- --ci
+      - run: npx expo export --platform web --output-dir /tmp/mq-web
