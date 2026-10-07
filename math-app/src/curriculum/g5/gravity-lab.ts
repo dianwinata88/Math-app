@@ -24,7 +24,8 @@ export const gravityLab: UnitDef = {
       const used = new Set<string>();
       const pairs = [];
       while (pairs.length < 3) {
-        const a = randInt(rng, 2, 9); const b = randInt(rng, 2, 9);
+        const a = randInt(rng, 2, 9); let b = randInt(rng, 2, 9);
+        while (a === b) b = randInt(rng, 2, 9);
         const value = simplify({ n: a, d: b });
         const key = `${value.n}/${value.d}`;
         if (used.has(key)) continue;

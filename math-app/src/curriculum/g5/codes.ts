@@ -29,7 +29,7 @@ export const codes: UnitDef = {
         const a = randInt(rng, 2, 9); const d = randInt(rng, 1, 8); const c = d + randInt(rng, 1, 8); const b = randInt(rng, 2, 15);
         expression = `${a} × [${b} + (${c} − ${d})]`; answer = a * (b + c - d);
       }
-      return numPad(`Evaluate the command code: ${expression}`, answer, {
+      return numPad('Evaluate the command code.', answer, {
         visual: { text: expression },
         hint: 'Parentheses/brackets first, then × and ÷, then + and −.',
       });

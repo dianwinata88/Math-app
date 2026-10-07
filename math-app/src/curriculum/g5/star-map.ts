@@ -52,16 +52,16 @@ export const starMap: UnitDef = {
       while (x === y) y = randInt(rng, 2, 7);
       if (rng() < 0.5) {
         const answer = `(${x}, ${y})`;
-        return mc(`From the origin, go ${x} units right and ${y} units up. Which coordinate is the station?`, answer, [
+        return mc(`From the origin, go ${x} units right and ${y} units up. Which ordered pair marks the station?`, answer, [
           `(${y}, ${x})`, `(${x + 1}, ${y})`, `(${x}, ${y + 1})`,
-        ], rng, { visual: { text: 'Quadrant I: x right, y up' } });
+        ], rng);
       }
       const startX = randInt(rng, 2, 6); let startY = randInt(rng, 2, 6);
       const right = randInt(rng, 1, 4); let up = randInt(rng, 1, 4);
       while (right === up) up = randInt(rng, 1, 4);
       while (startX + right === startY + up) startY = randInt(rng, 2, 6);
       const movedPoint = `(${startX + right}, ${startY + up})`;
-      return mc(`Station is at (${startX}, ${startY}). Move ${right} right and ${up} up. What is the new point?`, movedPoint, [
+      return mc(`Station is at (${startX}, ${startY}). Move ${right} right and ${up} up. Which ordered pair marks the station?`, movedPoint, [
         `(${startX + up}, ${startY + right})`, `(${startX + right - 1}, ${startY + up})`,
         startX - right >= 0 ? `(${startX - right}, ${startY + up})` : `(${startX + right}, ${startY + up + 1})`,
       ], rng);

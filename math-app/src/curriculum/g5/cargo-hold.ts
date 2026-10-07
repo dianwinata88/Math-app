@@ -79,7 +79,7 @@ export const cargoHold: UnitDef = {
         wrong = [simplify({ n: selected[selected.length - 1], d: 8 }), simplify({ n: selected[0], d: 8 }), simplify({ n: selected[selected.length - 1] + selected[0], d: 8 })];
       } else {
         answer = simplify({ n: totalEighths, d: 8 * totalCount });
-        prompt = `How much sample mass goes in each of ${totalCount} beakers?`;
+        prompt = `If all the sample mass is shared equally among ${totalCount} beakers, how much goes in each?`;
         wrong = [simplify({ n: totalEighths, d: 8 }), simplify({ n: totalCount, d: totalEighths }), simplify({ n: totalEighths, d: 8 * (totalCount + 1) })];
       }
       return buildMc(prompt, { label: fracLabel(answer), value: answer }, wrong.map((value) => ({

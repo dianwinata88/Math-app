@@ -131,7 +131,7 @@ export const transportContexts = [
   { name: 'zero-g soccer teams', capacity: 'players', travelers: 'players' },
 ];
 export const volumeStructures = ['cargo crate', 'Europa aquarium tank', 'bio-dome pet habitat'];
-export const decimalSupplies = ['fuel cells in liters (L)', 'oxygen in kilograms (kg)'];
+export const decimalSupplies = ['Fuel cell (L)', 'Oxygen tank (kg)'];
 export const shareContexts = ['fuel-cell reserve', 'bio-dome juice', 'ration bars', 'Europa sub oxygen'];
 export const fractionMissionFoods = ['space-café snack', 'Europa algae pizza', 'fruit pouch'];
 export const engineLogs = ['Station log', 'Rover bay log', 'Crew report'];

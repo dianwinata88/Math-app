@@ -353,7 +353,7 @@ describe('Grade 5 generator invariants', () => {
       } else if (question.prompt.includes('difference between')) {
         assertFractionLabel(question.answer, fraction(entries[entries.length - 1].eighths - entries[0].eighths, 8));
       } else {
-        const beakers = Number(question.prompt.match(/each of (\d+) beakers/)![1]);
+        const beakers = Number(question.prompt.match(/among (\d+) beakers/)![1]);
         expect(beakers).toBe(totalCount);
         assertFractionLabel(question.answer, fraction(totalEighths, 8 * beakers));
       }
