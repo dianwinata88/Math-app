@@ -308,19 +308,22 @@ const digits: UnitDef = {
       const d = randInt(rng, 1, 9);
       const placeA = pick(rng, [100, 10, 1]);   // tenths, hundredths, thousandths (in thousandths units)
       let placeB = pick(rng, [100, 10, 1]);
-      const w1 = randInt(rng, 1, 9); const w2 = randInt(rng, 1, 9);
-      const filler = randInt(rng, 0, 9);
-      const buildNumber = (whole: number, place: number, fill: number): number => {
-        const t = place === 100 ? d : fill;
-        const h = place === 10 ? d : (fill + 3) % 10;
-        const th = place === 1 ? d : (fill + 7) % 10;
-        return whole * 1000 + t * 100 + h * 10 + th;
+      const otherDigit = (allowZero: boolean): number => {
+        let v = randInt(rng, allowZero ? 0 : 1, 9);
+        while (v === d) v = randInt(rng, allowZero ? 0 : 1, 9);
+        return v;
       };
-      const a = buildNumber(w1, placeA, filler);
-      let b = buildNumber(w2, placeB, (filler + 4) % 10);
+      const buildNumber = (place: number): number => {
+        const t = place === 100 ? d : otherDigit(true);
+        const h = place === 10 ? d : otherDigit(true);
+        const th = place === 1 ? d : otherDigit(true);
+        return otherDigit(false) * 1000 + t * 100 + h * 10 + th;
+      };
+      const a = buildNumber(placeA);
+      let b = buildNumber(placeB);
       while (decLabel(b, 1000) === decLabel(a, 1000)) {
         placeB = pick(rng, [100, 10, 1]);
-        b = buildNumber(randInt(rng, 1, 9), placeB, randInt(rng, 0, 9));
+        b = buildNumber(placeB);
       }
       const actual = placeA / placeB;
       const claim = pick(rng, [1, 10, 100]);
