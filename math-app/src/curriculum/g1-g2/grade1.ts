@@ -1,6 +1,7 @@
 import { pick, randInt, randInts, shuffle } from '../../core/rng';
 import type { GradeDef } from '../../core/types';
 import { level, matchPairs, mc, numPad, orderSeq, trueFalse } from '../helpers';
+import { g1Pack } from './g1-pack';
 import {
   CLOCK_HALF,
   CLOCK_HOUR,
@@ -347,5 +348,6 @@ export const grade1: GradeDef = {
         }),
       ],
     },
+    ...g1Pack,
   ],
 };
