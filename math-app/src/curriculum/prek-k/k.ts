@@ -12,6 +12,7 @@ import {
   STORY_CONTEXTS,
 } from './banks';
 import { choose, chooseDistinct, pickChoices, repeat } from './choices';
+import { kPack } from './k-pack';
 
 const FOOD = ['🍎', '🍌', '🍓', '🍪', '🧁'] as const;
 const POSITION_LABELS = ['⬆️ above', '⬇️ below', '➡️ beside'] as const;
@@ -424,5 +425,6 @@ export const k: GradeDef = {
         }),
       ],
     },
+    ...kPack,
   ],
 };
