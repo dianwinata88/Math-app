@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
   unitTitle: { color: colors.ink, fontSize: 20, fontWeight: '900' },
   unitDomain: { color: colors.inkSoft, fontSize: 13, textTransform: 'capitalize', marginTop: 2 },
   unitBadge: { width: 34, height: 34, textAlign: 'center', lineHeight: 34, color: colors.ink, fontWeight: '900', borderRadius: 18, overflow: 'hidden' },
-  path: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', gap: 10 },
+  path: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-around', gap: 10 },
   level: { width: 90, minHeight: 92, borderRadius: 28, alignItems: 'center', justifyContent: 'center', padding: 8, gap: 2 },
   levelOffset: { marginTop: 20 },
   levelNumber: { color: colors.ink, fontSize: 22, fontWeight: '900' },
