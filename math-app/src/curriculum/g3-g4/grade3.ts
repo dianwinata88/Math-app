@@ -2,6 +2,7 @@ import { pick, randInt, shuffle } from '../../core/rng';
 import type { GradeDef, Rng } from '../../core/types';
 import { level, matchPairs, numPad, orderSeq, trueFalse } from '../helpers';
 import { board, clock, clockFromMinutes, countTap, fmt, grid, labelMc, name, numMc } from './util';
+import { g3Pack } from './g3-pack';
 
 /* Grade 3 world: Treasure Island 🏝️ — pirates, parrots, beaches and island markets. */
 
@@ -618,6 +619,7 @@ export const g3: GradeDef = {
     shapeShipyard(),
     islandGraphs(),
     pirateMarket(),
+    ...g3Pack,
   ],
 };
 

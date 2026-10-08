@@ -390,7 +390,8 @@ describe('Grades 3–4 question quality', () => {
 
   it('keeps each grade within 6–9 units of 3–5 levels', () => {
     for (const grade of g3g4) {
-      // Expansion packs are additive on top of the core band units.
+      // Expansion packs (*.pack-* units, see docs/level-pack-spec.md) are
+      // additive by design and excluded from the original band-size bounds.
       const coreUnits = grade.units.filter((unit) => !unit.id.includes('.pack-'));
       expect(coreUnits.length).toBeGreaterThanOrEqual(6);
       expect(coreUnits.length).toBeLessThanOrEqual(9);

@@ -12,6 +12,7 @@ import {
   SMALL_THINGS,
 } from './banks';
 import { choose, chooseDistinct, pickChoices, repeat } from './choices';
+import { prekPack } from './prek-pack';
 
 const LOOK_ALIKE: Record<number, number[]> = {
   0: [8],
@@ -343,5 +344,6 @@ export const prek: GradeDef = {
         }),
       ],
     },
+    ...prekPack,
   ],
 };

@@ -1,6 +1,7 @@
 import { pick, randInt, randInts, shuffle } from '../../core/rng';
 import type { GradeDef } from '../../core/types';
 import { level, matchPairs, mc, numPad, orderSeq, trueFalse } from '../helpers';
+import { g2Pack } from './g2-pack';
 import {
   capitalizeWord,
   formatCents,
@@ -419,5 +420,6 @@ export const grade2: GradeDef = {
         }),
       ],
     },
+    ...g2Pack,
   ],
 };
