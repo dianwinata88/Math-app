@@ -109,7 +109,7 @@ export const g2Pack: UnitDef[] = [
       level('g2.pack-counting.even-pairs', 'Even Pairs', 'number-pad', 2, (rng) => {
         const pairs = randInt(rng, 2, 15);
         return numPad(`${pairs * 2} starfish share into pairs evenly. How many pairs?`, pairs, {
-          visual: { emoji: '⭐', groups: Array.from({ length: Math.min(pairs, 6) }, () => 2) },
+          visual: { emoji: '⭐', groups: Array.from({ length: pairs }, () => 2) },
           hint: 'An even number splits into pairs with none left over',
         });
       }),
@@ -940,7 +940,7 @@ export const g2Pack: UnitDef[] = [
         const [low, high] = randInts(rng, 1, 8, 2);
         const graph = `${capitalizeWord(rows[0].name)}: ${'▇'.repeat(low)}\n${capitalizeWord(rows[1].name)}: ${'▇'.repeat(high)}`;
         const claimMore = rng() < 0.5;
-        const statement = claimMore ? `${capitalizeWord(rows[0].name)} has more than ${rows[1].name}.` : `${capitalizeWord(rows[0].name)} has fewer than ${rows[1].name}.`;
+        const statement = claimMore ? `${capitalizeWord(rows[0].name)} have more than ${rows[1].name}.` : `${capitalizeWord(rows[0].name)} have fewer than ${rows[1].name}.`;
         return trueFalse(`${graph}\n${statement}`, !claimMore, { hint: 'Compare the bar lengths' });
       }),
     ],
