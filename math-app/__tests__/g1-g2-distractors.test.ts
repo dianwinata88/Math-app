@@ -69,7 +69,8 @@ describe('Grades 1–2 distractors and level contracts', () => {
 
   it('keeps the requested band size', () => {
     for (const grade of grades) {
-      // Expansion packs are additive on top of the core band units.
+      // Expansion packs (*.pack-* units, see docs/level-pack-spec.md) are
+      // additive by design and excluded from the original band-size bounds.
       const coreUnits = grade.units.filter((unit) => !unit.id.includes('.pack-'));
       const levels = coreUnits.flatMap((unit) => unit.levels);
       expect(coreUnits.length).toBeGreaterThanOrEqual(6);
