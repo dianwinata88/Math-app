@@ -30,6 +30,26 @@ npx expo export --platform web --output-dir /tmp/mq-web
 
 Profiles are persisted locally with AsyncStorage. MathQuest is a standalone Expo project with its own npm lockfile; it is not part of the Expo monorepo workspaces.
 
+## Game catalog
+
+MathQuest ships **1340 playable levels** across 7 grades and all 13 domains. Every level is a `LevelDef` with a deterministic `generate(rng)` factory, validated by `__tests__/catalog.test.ts` (≥1000 levels + full domain coverage per grade) and per-pack coverage tests (each level × 200 seeds).
+
+| Grade | Ages | Units | Levels |
+| --- | --- | --- | --- |
+| PreK | 3–4 | 23 | 177 |
+| K | 5–6 | 24 | 191 |
+| Grade 1 | 6–7 | 23 | 188 |
+| Grade 2 | 7–8 | 25 | 210 |
+| Grade 3 | 8–9 | 23 | 188 |
+| Grade 4 | 9–10 | 23 | 192 |
+| Grade 5 | 10–12 | 23 | 194 |
+
+Every grade covers all 13 domains: counting, operations, place-value, fractions, decimals, geometry, measurement, data, money, time, patterns, word-problems, algebra. The full unit/level tree is generated into `docs/catalog.json` via `DUMP_CATALOG=1 npx jest dump-catalog --ci` (also emits `docs/level-ids.json` for the web crawler).
+
+Game mechanics: `multiple-choice`, `count-tap`, `number-pad`, `match-pairs`, `order-sequence`, `true-false`.
+
+To add more levels, follow `docs/level-pack-spec.md`: author a self-contained `<grade>-pack.ts` exporting a `UnitDef[]`, register it in your grade file only, and add a `coverage-<grade>-pack.test.ts`.
+
 ## Curriculum band contract
 
 Each band child owns only its assigned directory and its own coverage test:
