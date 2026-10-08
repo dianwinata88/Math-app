@@ -390,13 +390,16 @@ describe('Grades 3–4 question quality', () => {
 
   it('keeps each grade within 6–9 units of 3–5 levels', () => {
     for (const grade of g3g4) {
-      expect(grade.units.length).toBeGreaterThanOrEqual(6);
-      expect(grade.units.length).toBeLessThanOrEqual(9);
-      for (const unit of grade.units) {
+      // Expansion packs (*.pack-* units, see docs/level-pack-spec.md) are
+      // additive by design and excluded from the original band-size bounds.
+      const coreUnits = grade.units.filter((unit) => !unit.id.includes('.pack-'));
+      expect(coreUnits.length).toBeGreaterThanOrEqual(6);
+      expect(coreUnits.length).toBeLessThanOrEqual(9);
+      for (const unit of coreUnits) {
         expect(unit.levels.length).toBeGreaterThanOrEqual(3);
         expect(unit.levels.length).toBeLessThanOrEqual(5);
       }
-      const total = grade.units.reduce((sum, unit) => sum + unit.levels.length, 0);
+      const total = coreUnits.reduce((sum, unit) => sum + unit.levels.length, 0);
       expect(total).toBeGreaterThanOrEqual(20);
       expect(total).toBeLessThanOrEqual(35);
     }
