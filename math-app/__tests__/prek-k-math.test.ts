@@ -66,8 +66,8 @@ describe('PreK and Kindergarten generated-question math', () => {
   it('has the specified curriculum shape and globally valid numeric options and hints', () => {
     const prek = getGrade('prek');
     const kindergarten = getGrade('k');
-    expect(prek.units).toHaveLength(9);
-    expect(prek.units.flatMap((unit) => unit.levels)).toHaveLength(29);
+    expect(prek.units).toHaveLength(23);
+    expect(prek.units.flatMap((unit) => unit.levels)).toHaveLength(177);
     expect(kindergarten.units).toHaveLength(10);
     expect(kindergarten.units.flatMap((unit) => unit.levels)).toHaveLength(35);
 
