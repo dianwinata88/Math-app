@@ -69,9 +69,11 @@ describe('Grades 1–2 distractors and level contracts', () => {
 
   it('keeps the requested band size', () => {
     for (const grade of grades) {
-      const levels = grade.units.flatMap((unit) => unit.levels);
-      expect(grade.units.length).toBeGreaterThanOrEqual(6);
-      expect(grade.units.length).toBeLessThanOrEqual(9);
+      // Expansion packs are additive on top of the core band units.
+      const coreUnits = grade.units.filter((unit) => !unit.id.includes('.pack-'));
+      const levels = coreUnits.flatMap((unit) => unit.levels);
+      expect(coreUnits.length).toBeGreaterThanOrEqual(6);
+      expect(coreUnits.length).toBeLessThanOrEqual(9);
       expect(levels.length).toBeGreaterThanOrEqual(20);
       expect(levels.length).toBeLessThanOrEqual(35);
     }
