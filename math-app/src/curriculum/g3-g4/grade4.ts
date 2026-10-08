@@ -1,6 +1,7 @@
 import { pick, randInt, shuffle } from '../../core/rng';
 import type { GradeDef, Rng } from '../../core/types';
 import { level, matchPairs, numPad, orderSeq, trueFalse } from '../helpers';
+import { g4Pack } from './g4-pack';
 import { dec, fmt, gcd, labelMc, name, numMc } from './util';
 
 /* Grade 4 world: Dragon Kingdom 🐉 — castles, knights, wizards and dragon treasure. */
@@ -614,5 +615,6 @@ export const g4: GradeDef = {
     decimalTreasury(),
     royalMeasures(),
     angleTower(),
+    ...g4Pack,
   ],
 };
