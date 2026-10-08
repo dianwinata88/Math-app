@@ -68,8 +68,8 @@ describe('PreK and Kindergarten generated-question math', () => {
     const kindergarten = getGrade('k');
     expect(prek.units).toHaveLength(9);
     expect(prek.units.flatMap((unit) => unit.levels)).toHaveLength(29);
-    expect(kindergarten.units).toHaveLength(10);
-    expect(kindergarten.units.flatMap((unit) => unit.levels)).toHaveLength(35);
+    expect(kindergarten.units).toHaveLength(24);
+    expect(kindergarten.units.flatMap((unit) => unit.levels)).toHaveLength(191);
 
     for (const gradeId of GRADE_IDS) {
       const grade = getGrade(gradeId);
