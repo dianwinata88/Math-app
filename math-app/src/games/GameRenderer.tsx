@@ -159,7 +159,7 @@ function MatchPairsGame({ question, onResult }: Props) {
   return (
     <View style={styles.container}>
       <Prompt question={question} />
-      <MascotBubble text="Tap a card on the left, then its match on the right!" emoji="🐵" />
+      <MascotBubble text="Tap a card on the left, then its match on the right!" emoji="🐿️" />
       <View style={styles.matchRow}>
         <View style={styles.matchCol}>
           {lefts.map((l) => (
@@ -249,7 +249,7 @@ const styles = StyleSheet.create({
     padding: 18,
     alignItems: 'center',
     borderWidth: 3,
-    borderColor: 'transparent',
+    borderColor: '#E9DDBE',
   },
   optionText: { fontSize: 24, fontWeight: '800', color: colors.ink },
   answerCard: { alignSelf: 'center', minWidth: 140, alignItems: 'center', paddingVertical: 8 },
@@ -262,7 +262,7 @@ const styles = StyleSheet.create({
     padding: 16,
     alignItems: 'center',
     borderWidth: 3,
-    borderColor: 'transparent',
+    borderColor: '#E9DDBE',
   },
   matched: { backgroundColor: colors.grass, opacity: 0.6 },
   selected: { borderColor: colors.skyDeep },
@@ -274,7 +274,7 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     paddingHorizontal: 20,
     borderWidth: 3,
-    borderColor: 'transparent',
+    borderColor: '#E9DDBE',
   },
   seqText: { fontSize: 26, fontWeight: '900', color: colors.ink },
 });

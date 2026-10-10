@@ -1,33 +1,33 @@
 export const colors = {
-  sky: '#7CC6FE',
-  skyDeep: '#208AEF',
-  grass: '#8ED081',
-  leaf: '#4CAF50',
-  sun: '#FFD166',
-  coral: '#FF6B6B',
-  grape: '#9B5DE5',
-  cream: '#FFF8E7',
-  ink: '#2D3142',
-  inkSoft: '#6B7280',
-  card: '#FFFFFF',
-  locked: '#C9CED6',
-  gold: '#F4B400',
+  sky: '#A9C79B', // soft fern — borders, pressed states
+  skyDeep: '#6E4F32', // bark brown — primary buttons, selections
+  grass: '#C9E4A6', // soft leaf fill — correct/matched states
+  leaf: '#5F9E4D', // leaf green — success, progress
+  sun: '#F4C95D', // warm sun yellow — frames, badges
+  coral: '#DE6B4F', // terracotta — errors
+  grape: '#9B72B8', // elderberry
+  cream: '#F6EEDC', // paper trail background
+  ink: '#40342A', // bark-dark text
+  inkSoft: '#7C6C58', // soft bark
+  card: '#FFFDF5', // picture-book paper panel
+  locked: '#CDBFA9', // trail-stone grey
+  gold: '#E8A13D', // sunset orange — stars, XP accents
 };
 
 export const gradeColors: Record<string, string> = {
-  prek: '#FF8FA3',
-  k: '#FFB84D',
-  g1: '#8ED081',
-  g2: '#5BC0EB',
-  g3: '#9B5DE5',
-  g4: '#F15BB5',
-  g5: '#208AEF',
+  prek: '#F29E7E', // fox peach
+  k: '#E8A13D', // sunset honey
+  g1: '#7FB069', // leaf
+  g2: '#4FA3A5', // stream
+  g3: '#9B72B8', // elderberry
+  g4: '#D96B8C', // wildflower
+  g5: '#4E7FA6', // river blue
 };
 
 export const radius = {
-  sm: 10,
-  md: 18,
-  lg: 28,
+  sm: 12,
+  md: 20,
+  lg: 30,
   pill: 999,
 };
 

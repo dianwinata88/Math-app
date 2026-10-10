@@ -21,7 +21,7 @@ export default function HomeScreen() {
   const dailyDone = profile.daily.date === todayISO() && profile.daily.total > 0 && profile.daily.done >= profile.daily.total;
 
   return (
-    <Screen bg="#FFF8E7">
+    <Screen bg={colors.cream}>
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.header}>
           <View style={styles.player}>
@@ -47,7 +47,7 @@ export default function HomeScreen() {
             <Text testID="daily-card-title" style={styles.dailyTitle}>{dailyDone ? 'Daily Practice Done!' : 'Daily Practice'}</Text>
             <Text testID="daily-card-caption" style={styles.dailySubtitle}>{dailyDone ? 'You’re a practice champion! Come back tomorrow.' : '10 fun questions picked just for you'}</Text>
           </View>
-          <Text style={styles.dailyEmoji}>{dailyDone ? '✅' : '🚀'}</Text>
+          <Text style={styles.dailyEmoji}>{dailyDone ? '✅' : '🥾'}</Text>
         </Pressable>
 
         <View style={styles.mapHeading}>
@@ -103,12 +103,12 @@ const styles = StyleSheet.create({
   content: { padding: 18, gap: 18, alignSelf: 'center', width: '100%', maxWidth: 760 },
   header: { gap: 12 },
   player: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  avatar: { width: 58, height: 58, lineHeight: 58, textAlign: 'center', fontSize: 38, backgroundColor: colors.card, borderRadius: 30 },
+  avatar: { width: 58, height: 58, lineHeight: 58, textAlign: 'center', fontSize: 38, backgroundColor: colors.card, borderRadius: 30, borderWidth: 2, borderColor: '#E7D9BC' },
   greeting: { color: colors.ink, fontSize: 25, fontWeight: '900' },
   gradeLabel: { color: colors.inkSoft, fontSize: 15, fontWeight: '700', marginTop: 2 },
   stats: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
-  stat: { color: colors.ink, fontSize: 16, fontWeight: '800', backgroundColor: colors.card, borderRadius: radius.pill, paddingVertical: 8, paddingHorizontal: 13 },
-  dailyCard: { minHeight: 116, borderRadius: radius.lg, padding: 20, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', shadowColor: '#000', shadowOpacity: 0.14, shadowRadius: 6, shadowOffset: { width: 0, height: 3 }, elevation: 3 },
+  stat: { color: colors.ink, fontSize: 16, fontWeight: '800', backgroundColor: colors.card, borderRadius: radius.pill, paddingVertical: 8, paddingHorizontal: 13, borderWidth: 1.5, borderColor: '#E7D9BC' },
+  dailyCard: { minHeight: 116, borderRadius: radius.lg, padding: 20, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', borderBottomWidth: 5, borderBottomColor: 'rgba(64, 52, 42, 0.22)', shadowColor: '#40342A', shadowOpacity: 0.16, shadowRadius: 6, shadowOffset: { width: 0, height: 3 }, elevation: 3 },
   dailyCopy: { flex: 1, gap: 6, paddingRight: 8 },
   dailyTitle: { color: colors.ink, fontSize: 25, fontWeight: '900' },
   dailySubtitle: { color: colors.ink, fontSize: 15, fontWeight: '600' },
@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
   mapHeading: { alignItems: 'center', gap: 2 },
   sectionTitle: { color: colors.ink, fontSize: 24, fontWeight: '900', textAlign: 'center' },
   mapSubtitle: { color: colors.inkSoft, fontSize: 15 },
-  unitCard: { gap: 18, borderWidth: 2, borderColor: '#F0E7D2' },
+  unitCard: { gap: 18, borderWidth: 2, borderColor: '#EBDDC0' },
   unitHeading: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   unitEmoji: { fontSize: 34 },
   unitTitles: { flex: 1 },
@@ -124,8 +124,8 @@ const styles = StyleSheet.create({
   unitDomain: { color: colors.inkSoft, fontSize: 13, textTransform: 'capitalize', marginTop: 2 },
   unitBadge: { width: 34, height: 34, textAlign: 'center', lineHeight: 34, color: colors.ink, fontWeight: '900', borderRadius: 18, overflow: 'hidden' },
   path: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap', gap: 10 },
-  level: { width: 90, minHeight: 92, borderRadius: 28, alignItems: 'center', justifyContent: 'center', padding: 8, gap: 2 },
-  levelOffset: { marginTop: 20 },
+  level: { width: 90, minHeight: 92, borderRadius: 26, borderTopLeftRadius: 34, borderBottomRightRadius: 32, alignItems: 'center', justifyContent: 'center', padding: 8, gap: 2, borderWidth: 2, borderBottomWidth: 5, borderColor: 'rgba(64, 52, 42, 0.35)', transform: [{ rotate: '-2deg' }] },
+  levelOffset: { marginTop: 20, transform: [{ rotate: '2deg' }] },
   levelNumber: { color: colors.ink, fontSize: 22, fontWeight: '900' },
   levelTitle: { color: colors.ink, fontSize: 11, fontWeight: '800', textAlign: 'center' },
   footerButtons: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 12, marginBottom: 16 },
