@@ -8,7 +8,7 @@ import type { GradeId } from '../core/types';
 import { BigButton, Card, Screen } from '../ui/components';
 import { colors, gradeColors, radius } from '../ui/theme';
 
-const avatars = ['🦊', '🐼', '🦁', '🐸', '🐵', '🐨', '🐯', '🐰'];
+const avatars = ['🧑‍🚀', '👽', '🤖', '🚀', '🛸', '🪐', '⭐', '👾'];
 
 export default function OnboardingScreen() {
   const router = useRouter();
@@ -26,7 +26,7 @@ export default function OnboardingScreen() {
   return (
     <Screen>
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-        <Text testID="onboarding-title" style={styles.title}>Let’s start your quest! ✨</Text>
+        <Text testID="onboarding-title" style={styles.title}>Let’s start your mission! 🚀</Text>
         <Text testID="onboarding-step" style={styles.step}>Step {step} of 3</Text>
         {step === 1 ? (
           <View style={styles.panel}>
@@ -62,7 +62,7 @@ export default function OnboardingScreen() {
               ))}
             </View>
             <View style={styles.actions}>
-              <BigButton testID="avatar-back" label="Back" color={colors.inkSoft} onPress={() => setStep(1)} />
+              <BigButton testID="avatar-back" label="Back" color={colors.locked} onPress={() => setStep(1)} />
               <BigButton testID="avatar-continue" label="Next" emoji="➡️" onPress={() => setStep(3)} />
             </View>
           </View>
@@ -84,14 +84,14 @@ export default function OnboardingScreen() {
               ))}
             </View>
             <View style={styles.actions}>
-              <BigButton testID="grade-back" label="Back" color={colors.inkSoft} onPress={() => setStep(2)} />
+              <BigButton testID="grade-back" label="Back" color={colors.locked} onPress={() => setStep(2)} />
               <BigButton testID="create-profile" label="Let’s go!" emoji="🚀" color={colors.leaf} onPress={finish} />
             </View>
           </View>
         ) : null}
         <Card style={styles.mascotCard}>
           <Text testID="onboarding-mascot" style={styles.mascot}>{avatar}</Text>
-          <Text style={styles.mascotCopy}>Big adventures start with little steps!</Text>
+          <Text style={styles.mascotCopy}>Big missions start with little steps!</Text>
         </Card>
       </ScrollView>
     </Screen>
@@ -101,17 +101,17 @@ export default function OnboardingScreen() {
 const styles = StyleSheet.create({
   content: { flexGrow: 1, alignItems: 'center', padding: 20, gap: 14 },
   title: { color: colors.ink, fontSize: 30, fontWeight: '900', textAlign: 'center', marginTop: 18 },
-  step: { color: colors.skyDeep, fontSize: 18, fontWeight: '800' },
+  step: { color: colors.sky, fontSize: 18, fontWeight: '800' },
   panel: { width: '100%', maxWidth: 540, gap: 18, alignItems: 'center' },
   prompt: { color: colors.ink, fontSize: 23, fontWeight: '800', textAlign: 'center' },
-  input: { width: '100%', padding: 16, backgroundColor: colors.card, borderRadius: radius.md, borderWidth: 2, borderColor: colors.sky, fontSize: 22 },
+  input: { width: '100%', padding: 16, backgroundColor: colors.nebula, borderRadius: radius.md, borderWidth: 2, borderColor: colors.sky, fontSize: 22, color: colors.ink },
   grid: { width: '100%', flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 12 },
-  avatar: { width: 76, height: 76, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.card, borderWidth: 3, borderColor: colors.card, borderRadius: radius.md },
-  avatarSelected: { borderColor: colors.skyDeep, backgroundColor: '#E6F4FE' },
+  avatar: { width: 76, height: 76, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.nebula, borderWidth: 3, borderColor: `${colors.glow}30`, borderRadius: radius.md },
+  avatarSelected: { borderColor: colors.sky, backgroundColor: `${colors.sky}26` },
   avatarEmoji: { fontSize: 42 },
   gradeGrid: { width: '100%', flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 10 },
-  gradeCard: { width: '30%', minWidth: 118, alignItems: 'center', backgroundColor: colors.card, borderWidth: 3, borderRadius: radius.md, paddingVertical: 14, paddingHorizontal: 8 },
-  gradeSelected: { backgroundColor: '#FFF0B8' },
+  gradeCard: { width: '30%', minWidth: 118, alignItems: 'center', backgroundColor: colors.nebula, borderWidth: 3, borderRadius: radius.md, paddingVertical: 14, paddingHorizontal: 8 },
+  gradeSelected: { backgroundColor: `${colors.grape}40` },
   gradeTitle: { color: colors.ink, fontSize: 19, fontWeight: '900' },
   gradeAge: { color: colors.inkSoft, fontSize: 13, marginTop: 3 },
   actions: { flexDirection: 'row', gap: 12, alignItems: 'center', justifyContent: 'center' },

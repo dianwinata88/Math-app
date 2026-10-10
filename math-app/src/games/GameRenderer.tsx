@@ -75,7 +75,7 @@ function ChoiceGame({ question, onResult }: Props) {
               }}
               style={[
                 styles.option,
-                isPicked && !locked && { borderColor: colors.skyDeep },
+                isPicked && !locked && { borderColor: colors.sky },
                 isRight && { backgroundColor: colors.grass },
                 isWrong && { backgroundColor: colors.coral },
               ]}>
@@ -159,7 +159,7 @@ function MatchPairsGame({ question, onResult }: Props) {
   return (
     <View style={styles.container}>
       <Prompt question={question} />
-      <MascotBubble text="Tap a card on the left, then its match on the right!" emoji="🐵" />
+      <MascotBubble text="Tap a card on the left, then its match on the right!" emoji="👽" />
       <View style={styles.matchRow}>
         <View style={styles.matchCol}>
           {lefts.map((l) => (
@@ -215,7 +215,7 @@ function OrderSequenceGame({ question, onResult }: Props) {
   return (
     <View style={styles.container}>
       <Prompt question={question} />
-      <MascotBubble text={`Tap them in order! (${nextIdx}/${sequence.length})`} emoji="🐢" />
+      <MascotBubble text={`Tap them in order! (${nextIdx}/${sequence.length})`} emoji="🛸" />
       <View style={styles.seqWrap}>
         {shuffled.map((item) => {
           const used = sequence.indexOf(item) < nextIdx;
@@ -244,12 +244,12 @@ const styles = StyleSheet.create({
   optionsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12, justifyContent: 'center' },
   option: {
     minWidth: '44%',
-    backgroundColor: colors.card,
+    backgroundColor: colors.nebula,
     borderRadius: radius.md,
     padding: 18,
     alignItems: 'center',
     borderWidth: 3,
-    borderColor: 'transparent',
+    borderColor: `${colors.glow}26`,
   },
   optionText: { fontSize: 24, fontWeight: '800', color: colors.ink },
   answerCard: { alignSelf: 'center', minWidth: 140, alignItems: 'center', paddingVertical: 8 },
@@ -257,24 +257,24 @@ const styles = StyleSheet.create({
   matchRow: { flexDirection: 'row', gap: 16, justifyContent: 'center' },
   matchCol: { gap: 10, flex: 1 },
   matchCard: {
-    backgroundColor: colors.card,
+    backgroundColor: colors.nebula,
     borderRadius: radius.md,
     padding: 16,
     alignItems: 'center',
     borderWidth: 3,
-    borderColor: 'transparent',
+    borderColor: `${colors.glow}26`,
   },
   matched: { backgroundColor: colors.grass, opacity: 0.6 },
-  selected: { borderColor: colors.skyDeep },
+  selected: { borderColor: colors.sky },
   matchText: { fontSize: 22, fontWeight: '800', color: colors.ink },
   seqWrap: { flexDirection: 'row', flexWrap: 'wrap', gap: 12, justifyContent: 'center' },
   seqItem: {
-    backgroundColor: colors.card,
+    backgroundColor: colors.nebula,
     borderRadius: radius.md,
     paddingVertical: 14,
     paddingHorizontal: 20,
     borderWidth: 3,
-    borderColor: 'transparent',
+    borderColor: `${colors.glow}26`,
   },
   seqText: { fontSize: 26, fontWeight: '900', color: colors.ink },
 });
