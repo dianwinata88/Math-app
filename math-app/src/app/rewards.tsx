@@ -35,7 +35,7 @@ export default function RewardsScreen() {
     <Screen>
       <ScrollView contentContainerStyle={styles.content}>
         <BigButton testID="rewards-back" label="Back to map" emoji="🗺️" onPress={() => router.replace('/home')} />
-        <Text testID="rewards-title" style={styles.title}>Your Treasure Chest 🎁</Text>
+        <Text testID="rewards-title" style={styles.title}>Your Treasure Chest</Text>
         <View style={styles.stats}>
           <Card style={styles.statCard}><Text style={styles.statEmoji}>🪙</Text><Text testID="rewards-coins" style={styles.statValue}>{profile.coins}</Text><Text style={styles.statLabel}>Coins</Text></Card>
           <Card style={styles.statCard}><Text style={styles.statEmoji}>✨</Text><Text testID="rewards-xp" style={styles.statValue}>{profile.xp}</Text><Text style={styles.statLabel}>XP</Text></Card>
@@ -64,19 +64,19 @@ export default function RewardsScreen() {
 }
 
 const styles = StyleSheet.create({
-  content: { alignSelf: 'center', width: '100%', maxWidth: 720, padding: 18, gap: 16, alignItems: 'center' },
-  title: { color: colors.ink, fontSize: 28, textAlign: 'center', fontWeight: '900' },
+  content: { alignSelf: 'center', width: '100%', maxWidth: 720, padding: 20, gap: 16, alignItems: 'center' },
+  title: { color: colors.ink, fontSize: 26, textAlign: 'center', fontWeight: '800', letterSpacing: 0.2 },
   stats: { width: '100%', flexDirection: 'row', justifyContent: 'center', gap: 10 },
   statCard: { flex: 1, maxWidth: 190, alignItems: 'center', paddingVertical: 14, paddingHorizontal: 8 },
-  statEmoji: { fontSize: 28 },
-  statValue: { color: colors.ink, fontSize: 24, fontWeight: '900' },
-  statLabel: { color: colors.inkSoft, fontSize: 13, fontWeight: '700' },
-  heading: { color: colors.ink, fontSize: 21, fontWeight: '900', alignSelf: 'flex-start' },
-  grid: { width: '100%', flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 12 },
-  sticker: { width: '30%', minWidth: 150, minHeight: 136, padding: 12, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.card, borderWidth: 2, borderColor: colors.sun, borderRadius: radius.md, gap: 4 },
-  locked: { borderColor: colors.locked, backgroundColor: '#ECEFF1' },
-  stickerEmoji: { fontSize: 38 },
+  statEmoji: { fontSize: 26 },
+  statValue: { color: colors.ink, fontSize: 22, fontWeight: '800' },
+  statLabel: { color: colors.inkSoft, fontSize: 12, fontWeight: '700', letterSpacing: 0.6, textTransform: 'uppercase' },
+  heading: { color: colors.ink, fontSize: 19, fontWeight: '800', alignSelf: 'flex-start' },
+  grid: { width: '100%', flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 10 },
+  sticker: { width: '30%', minWidth: 150, minHeight: 132, padding: 12, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.card, borderWidth: 1, borderColor: colors.gold, borderRadius: radius.md, gap: 4 },
+  locked: { borderColor: colors.border, backgroundColor: colors.paper },
+  stickerEmoji: { fontSize: 36 },
   greyed: { opacity: 0.35 },
-  stickerName: { color: colors.ink, fontSize: 14, fontWeight: '900', textAlign: 'center' },
+  stickerName: { color: colors.ink, fontSize: 14, fontWeight: '800', textAlign: 'center' },
   stickerRule: { color: colors.inkSoft, fontSize: 11, fontWeight: '600', textAlign: 'center' },
 });
