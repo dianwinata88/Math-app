@@ -21,7 +21,7 @@ export default function HomeScreen() {
   const dailyDone = profile.daily.date === todayISO() && profile.daily.total > 0 && profile.daily.done >= profile.daily.total;
 
   return (
-    <Screen bg="#FFF8E7">
+    <Screen bg={colors.cream}>
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.header}>
           <View style={styles.player}>
@@ -42,7 +42,7 @@ export default function HomeScreen() {
           testID="daily-practice-card"
           accessibilityRole="button"
           onPress={() => router.push('/daily')}
-          style={[styles.dailyCard, { backgroundColor: gradeColors[grade.id] }]}>
+          style={[styles.dailyCard, { backgroundColor: gradeColors[grade.id], shadowColor: gradeColors[grade.id] }]}>
           <View style={styles.dailyCopy}>
             <Text testID="daily-card-title" style={styles.dailyTitle}>{dailyDone ? 'Daily Practice Done!' : 'Daily Practice'}</Text>
             <Text testID="daily-card-caption" style={styles.dailySubtitle}>{dailyDone ? 'You’re a practice champion! Come back tomorrow.' : '10 fun questions picked just for you'}</Text>
@@ -51,8 +51,8 @@ export default function HomeScreen() {
         </Pressable>
 
         <View style={styles.mapHeading}>
-          <Text testID="adventure-map-title" style={styles.sectionTitle}>Your Adventure Map 🗺️</Text>
-          <Text style={styles.mapSubtitle}>Choose a path and collect stars!</Text>
+          <Text testID="adventure-map-title" style={styles.sectionTitle}>Your Adventure Map 🛰️</Text>
+          <Text style={styles.mapSubtitle}>Follow the route and collect stars!</Text>
         </View>
         {grade.units.map((unit, unitIndex) => (
           <Card key={unit.id} style={[styles.unitCard, { borderColor: gradeColors[grade.id], backgroundColor: `${gradeColors[grade.id]}1A` }]}>
@@ -78,7 +78,11 @@ export default function HomeScreen() {
                     onPress={() => router.push({ pathname: '/play/[levelId]', params: { levelId: level.id } })}
                     style={[
                       styles.level,
-                      { backgroundColor: unlocked ? gradeColors[grade.id] : colors.locked },
+                      {
+                        backgroundColor: unlocked ? gradeColors[grade.id] : colors.locked,
+                        borderColor: unlocked ? '#FFFFFF80' : '#4A5480',
+                        shadowColor: unlocked ? gradeColors[grade.id] : 'transparent',
+                      },
                       levelIndex % 2 === 1 && styles.levelOffset,
                     ]}>
                     <Text testID={`level-label-${level.id}`} style={styles.levelNumber}>{unlocked ? levelIndex + 1 : '🔒'}</Text>
@@ -92,7 +96,7 @@ export default function HomeScreen() {
         ))}
         <View style={styles.footerButtons}>
           <BigButton testID="open-rewards" label="Rewards" emoji="🎁" color={colors.grape} onPress={() => router.push('/rewards')} />
-          <BigButton testID="open-profile" label="Profile" emoji="👤" color={colors.skyDeep} onPress={() => router.push('/profile')} />
+          <BigButton testID="open-profile" label="Profile" emoji="🧑‍🚀" color={colors.skyDeep} onPress={() => router.push('/profile')} />
         </View>
       </ScrollView>
     </Screen>
@@ -103,12 +107,12 @@ const styles = StyleSheet.create({
   content: { padding: 18, gap: 18, alignSelf: 'center', width: '100%', maxWidth: 760 },
   header: { gap: 12 },
   player: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  avatar: { width: 58, height: 58, lineHeight: 58, textAlign: 'center', fontSize: 38, backgroundColor: colors.card, borderRadius: 30 },
+  avatar: { width: 58, height: 58, lineHeight: 58, textAlign: 'center', fontSize: 38, backgroundColor: colors.nebula, borderRadius: 30, borderWidth: 2, borderColor: `${colors.glow}66` },
   greeting: { color: colors.ink, fontSize: 25, fontWeight: '900' },
   gradeLabel: { color: colors.inkSoft, fontSize: 15, fontWeight: '700', marginTop: 2 },
   stats: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
-  stat: { color: colors.ink, fontSize: 16, fontWeight: '800', backgroundColor: colors.card, borderRadius: radius.pill, paddingVertical: 8, paddingHorizontal: 13 },
-  dailyCard: { minHeight: 116, borderRadius: radius.lg, padding: 20, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', shadowColor: '#000', shadowOpacity: 0.14, shadowRadius: 6, shadowOffset: { width: 0, height: 3 }, elevation: 3 },
+  stat: { color: colors.ink, fontSize: 16, fontWeight: '800', backgroundColor: colors.nebula, borderRadius: radius.pill, paddingVertical: 8, paddingHorizontal: 13, borderWidth: 1, borderColor: `${colors.glow}38`, overflow: 'hidden' },
+  dailyCard: { minHeight: 116, borderRadius: radius.lg, padding: 20, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', borderWidth: 1, borderColor: '#FFFFFF4D', shadowOpacity: 0.5, shadowRadius: 14, shadowOffset: { width: 0, height: 0 }, elevation: 6 },
   dailyCopy: { flex: 1, gap: 6, paddingRight: 8 },
   dailyTitle: { color: colors.ink, fontSize: 25, fontWeight: '900' },
   dailySubtitle: { color: colors.ink, fontSize: 15, fontWeight: '600' },
@@ -116,7 +120,7 @@ const styles = StyleSheet.create({
   mapHeading: { alignItems: 'center', gap: 2 },
   sectionTitle: { color: colors.ink, fontSize: 24, fontWeight: '900', textAlign: 'center' },
   mapSubtitle: { color: colors.inkSoft, fontSize: 15 },
-  unitCard: { gap: 18, borderWidth: 2, borderColor: '#F0E7D2' },
+  unitCard: { gap: 18, borderWidth: 2, borderColor: `${colors.glow}33` },
   unitHeading: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   unitEmoji: { fontSize: 34 },
   unitTitles: { flex: 1 },
@@ -124,7 +128,7 @@ const styles = StyleSheet.create({
   unitDomain: { color: colors.inkSoft, fontSize: 13, textTransform: 'capitalize', marginTop: 2 },
   unitBadge: { width: 34, height: 34, textAlign: 'center', lineHeight: 34, color: colors.ink, fontWeight: '900', borderRadius: 18, overflow: 'hidden' },
   path: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap', gap: 10 },
-  level: { width: 90, minHeight: 92, borderRadius: 28, alignItems: 'center', justifyContent: 'center', padding: 8, gap: 2 },
+  level: { width: 92, height: 92, borderRadius: 46, alignItems: 'center', justifyContent: 'center', padding: 6, gap: 2, borderWidth: 2, shadowOpacity: 0.55, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 5 },
   levelOffset: { marginTop: 20 },
   levelNumber: { color: colors.ink, fontSize: 22, fontWeight: '900' },
   levelTitle: { color: colors.ink, fontSize: 11, fontWeight: '800', textAlign: 'center' },

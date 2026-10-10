@@ -35,7 +35,7 @@ export default function RewardsScreen() {
     <Screen>
       <ScrollView contentContainerStyle={styles.content}>
         <BigButton testID="rewards-back" label="Back to map" emoji="🗺️" onPress={() => router.replace('/home')} />
-        <Text testID="rewards-title" style={styles.title}>Your Treasure Chest 🎁</Text>
+        <Text testID="rewards-title" style={styles.title}>Your Treasure Chest 💫</Text>
         <View style={styles.stats}>
           <Card style={styles.statCard}><Text style={styles.statEmoji}>🪙</Text><Text testID="rewards-coins" style={styles.statValue}>{profile.coins}</Text><Text style={styles.statLabel}>Coins</Text></Card>
           <Card style={styles.statCard}><Text style={styles.statEmoji}>✨</Text><Text testID="rewards-xp" style={styles.statValue}>{profile.xp}</Text><Text style={styles.statLabel}>XP</Text></Card>
@@ -57,7 +57,7 @@ export default function RewardsScreen() {
             );
           })}
         </View>
-        <BigButton testID="rewards-profile" label="Parent profile" emoji="👤" color={colors.grape} onPress={() => router.push('/profile')} />
+        <BigButton testID="rewards-profile" label="Parent profile" emoji="🧑‍🚀" color={colors.grape} onPress={() => router.push('/profile')} />
       </ScrollView>
     </Screen>
   );
@@ -73,8 +73,8 @@ const styles = StyleSheet.create({
   statLabel: { color: colors.inkSoft, fontSize: 13, fontWeight: '700' },
   heading: { color: colors.ink, fontSize: 21, fontWeight: '900', alignSelf: 'flex-start' },
   grid: { width: '100%', flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 12 },
-  sticker: { width: '30%', minWidth: 150, minHeight: 136, padding: 12, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.card, borderWidth: 2, borderColor: colors.sun, borderRadius: radius.md, gap: 4 },
-  locked: { borderColor: colors.locked, backgroundColor: '#ECEFF1' },
+  sticker: { width: '30%', minWidth: 150, minHeight: 136, padding: 12, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.nebula, borderWidth: 2, borderColor: `${colors.gold}88`, borderRadius: radius.md, gap: 4, shadowColor: colors.gold, shadowOpacity: 0.25, shadowRadius: 8, shadowOffset: { width: 0, height: 0 } },
+  locked: { borderColor: colors.locked, backgroundColor: colors.void, shadowOpacity: 0 },
   stickerEmoji: { fontSize: 38 },
   greyed: { opacity: 0.35 },
   stickerName: { color: colors.ink, fontSize: 14, fontWeight: '900', textAlign: 'center' },

@@ -1,12 +1,63 @@
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import type { DimensionValue } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { colors, radius } from './theme';
 import type { VisualSpec } from '../core/types';
 
+// Deterministic star scatter rendered behind every screen.
+const STARS: { top: DimensionValue; left: DimensionValue; size: number; opacity: number; glyph: string; color: string }[] = [
+  { top: '4%', left: '8%', size: 16, opacity: 0.9, glyph: '✦', color: colors.sky },
+  { top: '9%', left: '72%', size: 10, opacity: 0.7, glyph: '✦', color: colors.ink },
+  { top: '3%', left: '45%', size: 8, opacity: 0.5, glyph: '·', color: colors.ink },
+  { top: '16%', left: '30%', size: 12, opacity: 0.8, glyph: '✦', color: colors.gold },
+  { top: '14%', left: '88%', size: 18, opacity: 0.85, glyph: '✦', color: colors.grape },
+  { top: '26%', left: '6%', size: 9, opacity: 0.55, glyph: '·', color: colors.sky },
+  { top: '30%', left: '58%', size: 13, opacity: 0.75, glyph: '✦', color: colors.ink },
+  { top: '38%', left: '92%', size: 8, opacity: 0.5, glyph: '·', color: colors.ink },
+  { top: '44%', left: '18%', size: 15, opacity: 0.8, glyph: '✦', color: colors.sky },
+  { top: '52%', left: '82%', size: 11, opacity: 0.65, glyph: '✦', color: colors.gold },
+  { top: '58%', left: '38%', size: 8, opacity: 0.45, glyph: '·', color: colors.ink },
+  { top: '64%', left: '10%', size: 12, opacity: 0.7, glyph: '✦', color: colors.grape },
+  { top: '70%', left: '66%', size: 16, opacity: 0.85, glyph: '✦', color: colors.sky },
+  { top: '78%', left: '28%', size: 9, opacity: 0.5, glyph: '·', color: colors.ink },
+  { top: '84%', left: '52%', size: 14, opacity: 0.75, glyph: '✦', color: colors.gold },
+  { top: '90%', left: '86%', size: 10, opacity: 0.6, glyph: '✦', color: colors.ink },
+  { top: '22%', left: '48%', size: 7, opacity: 0.4, glyph: '·', color: colors.sky },
+  { top: '48%', left: '70%', size: 9, opacity: 0.5, glyph: '·', color: colors.ink },
+  { top: '73%', left: '4%', size: 11, opacity: 0.6, glyph: '✦', color: colors.ink },
+  { top: '94%', left: '20%', size: 8, opacity: 0.45, glyph: '·', color: colors.gold },
+];
+
+function Starfield() {
+  return (
+    <View pointerEvents="none" style={StyleSheet.absoluteFill}>
+      {STARS.map((star, i) => (
+        <Text
+          key={i}
+          style={{
+            position: 'absolute',
+            top: star.top,
+            left: star.left,
+            fontSize: star.size,
+            opacity: star.opacity,
+            color: star.color,
+          }}>
+          {star.glyph}
+        </Text>
+      ))}
+    </View>
+  );
+}
+
 export function Screen({ children, bg = colors.cream }: { children: React.ReactNode; bg?: string }) {
-  return <SafeAreaView style={[styles.screen, { backgroundColor: bg }]}>{children}</SafeAreaView>;
+  return (
+    <SafeAreaView style={[styles.screen, { backgroundColor: bg }]}>
+      <Starfield />
+      {children}
+    </SafeAreaView>
+  );
 }
 
 export function BigButton({
@@ -31,7 +82,10 @@ export function BigButton({
       onPress={disabled ? undefined : onPress}
       style={({ pressed }) => [
         styles.bigButton,
-        { backgroundColor: disabled ? colors.locked : color },
+        {
+          backgroundColor: disabled ? colors.locked : color,
+          shadowColor: disabled ? '#000' : color,
+        },
         pressed && !disabled && { transform: [{ scale: 0.96 }] },
       ]}>
       <Text style={styles.bigButtonText}>
@@ -49,14 +103,14 @@ export function Card({ children, style }: { children: React.ReactNode; style?: o
 export function ProgressBar({ value, color = colors.leaf }: { value: number; color?: string }) {
   return (
     <View style={styles.progressTrack}>
-      <View style={[styles.progressFill, { width: `${Math.min(100, Math.max(0, value * 100))}%`, backgroundColor: color }]} />
+      <View style={[styles.progressFill, { width: `${Math.min(100, Math.max(0, value * 100))}%`, backgroundColor: color, shadowColor: color }]} />
     </View>
   );
 }
 
 export function StarRow({ stars, size = 22 }: { stars: number; size?: number }) {
   return (
-    <Text style={{ fontSize: size, letterSpacing: 2 }}>
+    <Text style={{ fontSize: size, letterSpacing: 2, color: colors.gold }}>
       {'★'.repeat(stars)}
       <Text style={{ color: colors.locked }}>{'★'.repeat(Math.max(0, 3 - stars))}</Text>
     </Text>
@@ -97,7 +151,7 @@ export function NumberPad({ onKey, onSubmit }: { onKey: (digit: string) => void;
           accessibilityRole="button"
           accessibilityLabel={k === '⏎' ? 'Submit' : k === '⌫' ? 'Delete' : `Digit ${k}`}
           onPress={() => (k === '⌫' ? onKey('backspace') : k === '⏎' ? onSubmit() : onKey(k))}
-          style={({ pressed }) => [styles.padKey, pressed && { backgroundColor: colors.sky }]}>
+          style={({ pressed }) => [styles.padKey, pressed && { backgroundColor: colors.nebula, borderColor: colors.sky }]}>
           <Text style={styles.padKeyText}>{k}</Text>
         </Pressable>
       ))}
@@ -105,7 +159,7 @@ export function NumberPad({ onKey, onSubmit }: { onKey: (digit: string) => void;
   );
 }
 
-export function MascotBubble({ text, emoji = '🦉' }: { text: string; emoji?: string }) {
+export function MascotBubble({ text, emoji = '🤖' }: { text: string; emoji?: string }) {
   return (
     <View style={styles.mascotRow}>
       <Text style={styles.mascotEmoji}>{emoji}</Text>
@@ -132,53 +186,58 @@ const styles = StyleSheet.create({
     borderRadius: radius.pill,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOpacity: 0.15,
-    shadowRadius: 6,
-    shadowOffset: { width: 0, height: 3 },
-    elevation: 3,
+    borderWidth: 1,
+    borderColor: '#FFFFFF40',
+    shadowOpacity: 0.55,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 0 },
+    elevation: 6,
   },
-  bigButtonText: { color: '#fff', fontSize: 20, fontWeight: '800' },
+  bigButtonText: { color: '#fff', fontSize: 20, fontWeight: '800', letterSpacing: 0.5 },
   card: {
     backgroundColor: colors.card,
     borderRadius: radius.lg,
     padding: 16,
-    shadowColor: '#000',
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 2,
+    borderWidth: 1,
+    borderColor: `${colors.glow}3D`,
+    shadowColor: colors.glow,
+    shadowOpacity: 0.22,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 0 },
+    elevation: 3,
   },
-  progressTrack: { height: 12, borderRadius: 6, backgroundColor: '#E8E2D0', overflow: 'hidden' },
-  progressFill: { height: '100%', borderRadius: 6 },
+  progressTrack: { height: 12, borderRadius: 6, backgroundColor: colors.void, overflow: 'hidden', borderWidth: 1, borderColor: `${colors.glow}30` },
+  progressFill: { height: '100%', borderRadius: 6, shadowOpacity: 0.8, shadowRadius: 6, shadowOffset: { width: 0, height: 0 } },
   visualText: { fontSize: 52, fontWeight: '900', color: colors.ink, textAlign: 'center' },
   visualRow: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 12 },
-  visualGroup: { backgroundColor: '#F3EFE0', borderRadius: radius.md, padding: 8 },
+  visualGroup: { backgroundColor: colors.nebula, borderRadius: radius.md, padding: 8, borderWidth: 1, borderColor: `${colors.glow}26` },
   visualEmoji: { fontSize: 34, textAlign: 'center', letterSpacing: 4 },
   pad: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 10, maxWidth: 360 },
   padKey: {
     width: '28%',
     aspectRatio: 1.6,
-    backgroundColor: colors.card,
+    backgroundColor: colors.nebula,
     borderRadius: radius.md,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    shadowOffset: { width: 0, height: 2 },
+    borderWidth: 1,
+    borderColor: `${colors.glow}45`,
+    shadowColor: colors.glow,
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 0 },
     elevation: 2,
   },
-  padKeyText: { fontSize: 28, fontWeight: '800', color: colors.ink },
+  padKeyText: { fontSize: 28, fontWeight: '800', color: colors.sky },
   mascotRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 10, paddingHorizontal: 8 },
   mascotEmoji: { fontSize: 44 },
   mascotBubble: {
     flex: 1,
-    backgroundColor: colors.card,
+    backgroundColor: colors.nebula,
     borderRadius: radius.md,
     padding: 12,
     borderWidth: 2,
-    borderColor: colors.sun,
+    borderColor: `${colors.glow}66`,
   },
   mascotText: { fontSize: 17, color: colors.ink, fontWeight: '600' },
   pill: { paddingVertical: 4, paddingHorizontal: 12, borderRadius: radius.pill },
