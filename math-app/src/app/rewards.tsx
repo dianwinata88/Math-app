@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
   heading: { color: colors.ink, fontSize: 21, fontWeight: '900', alignSelf: 'flex-start' },
   grid: { width: '100%', flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 12 },
   sticker: { width: '30%', minWidth: 150, minHeight: 136, padding: 12, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.card, borderWidth: 2, borderColor: colors.sun, borderRadius: radius.md, gap: 4 },
-  locked: { borderColor: colors.locked, backgroundColor: '#ECEFF1' },
+  locked: { borderColor: colors.locked, backgroundColor: '#EFE7D5' },
   stickerEmoji: { fontSize: 38 },
   greyed: { opacity: 0.35 },
   stickerName: { color: colors.ink, fontSize: 14, fontWeight: '900', textAlign: 'center' },

@@ -56,7 +56,7 @@ export function ProgressBar({ value, color = colors.leaf }: { value: number; col
 
 export function StarRow({ stars, size = 22 }: { stars: number; size?: number }) {
   return (
-    <Text style={{ fontSize: size, letterSpacing: 2 }}>
+    <Text style={{ fontSize: size, letterSpacing: 2, color: colors.gold }}>
       {'★'.repeat(stars)}
       <Text style={{ color: colors.locked }}>{'★'.repeat(Math.max(0, 3 - stars))}</Text>
     </Text>
@@ -132,8 +132,10 @@ const styles = StyleSheet.create({
     borderRadius: radius.pill,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOpacity: 0.15,
+    borderBottomWidth: 4,
+    borderBottomColor: 'rgba(64, 52, 42, 0.28)',
+    shadowColor: '#40342A',
+    shadowOpacity: 0.18,
     shadowRadius: 6,
     shadowOffset: { width: 0, height: 3 },
     elevation: 3,
@@ -143,19 +145,21 @@ const styles = StyleSheet.create({
     backgroundColor: colors.card,
     borderRadius: radius.lg,
     padding: 16,
-    shadowColor: '#000',
-    shadowOpacity: 0.08,
+    borderWidth: 1.5,
+    borderColor: '#E9DDBE',
+    shadowColor: '#40342A',
+    shadowOpacity: 0.1,
     shadowRadius: 8,
     shadowOffset: { width: 0, height: 2 },
     elevation: 2,
   },
-  progressTrack: { height: 12, borderRadius: 6, backgroundColor: '#E8E2D0', overflow: 'hidden' },
+  progressTrack: { height: 12, borderRadius: 6, backgroundColor: '#E7DCC2', overflow: 'hidden' },
   progressFill: { height: '100%', borderRadius: 6 },
   visualText: { fontSize: 52, fontWeight: '900', color: colors.ink, textAlign: 'center' },
   visualRow: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 12 },
-  visualGroup: { backgroundColor: '#F3EFE0', borderRadius: radius.md, padding: 8 },
+  visualGroup: { backgroundColor: '#F2E7CB', borderRadius: radius.md, padding: 8 },
   visualEmoji: { fontSize: 34, textAlign: 'center', letterSpacing: 4 },
-  pad: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 10, maxWidth: 360 },
+  pad: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 10, maxWidth: 360, alignSelf: 'center' },
   padKey: {
     width: '28%',
     aspectRatio: 1.6,
@@ -163,7 +167,9 @@ const styles = StyleSheet.create({
     borderRadius: radius.md,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#000',
+    borderBottomWidth: 3,
+    borderBottomColor: 'rgba(64, 52, 42, 0.18)',
+    shadowColor: '#40342A',
     shadowOpacity: 0.1,
     shadowRadius: 4,
     shadowOffset: { width: 0, height: 2 },
