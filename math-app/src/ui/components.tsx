@@ -159,7 +159,7 @@ const styles = StyleSheet.create({
   visualRow: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 12 },
   visualGroup: { backgroundColor: '#F2E7CB', borderRadius: radius.md, padding: 8 },
   visualEmoji: { fontSize: 34, textAlign: 'center', letterSpacing: 4 },
-  pad: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 10, maxWidth: 360 },
+  pad: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 10, maxWidth: 360, alignSelf: 'center' },
   padKey: {
     width: '28%',
     aspectRatio: 1.6,
