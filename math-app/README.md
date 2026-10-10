@@ -50,6 +50,19 @@ Game mechanics: `multiple-choice`, `count-tap`, `number-pad`, `match-pairs`, `or
 
 To add more levels, follow `docs/level-pack-spec.md`: author a self-contained `<grade>-pack.ts` exporting a `UnitDef[]`, register it in your grade file only, and add a `coverage-<grade>-pack.test.ts`.
 
+## Documentation
+
+Player-facing docs live in `docs/` as static HTML — open them directly or serve the folder on any static host:
+
+- `docs/guide/index.html` — user guide: onboarding, Adventure Map, daily practice, rewards/stickers, question types, Parent Area, FAQ.
+- `docs/wiki/index.html` — wiki index linking to a page per grade (all 164 units / 1340 levels), a page per domain topic, the question-type reference, and the grade × topic coverage matrix.
+
+The wiki is generated from the live catalog — after adding or changing levels, regenerate it with:
+
+```bash
+python3 scripts/build-wiki.py
+```
+
 ## Curriculum band contract
 
 Each band child owns only its assigned directory and its own coverage test:
