@@ -32,7 +32,7 @@ export function SessionRunner({ title, questions, onExit, onFinish }: Props) {
           {correct} / {questions.length} correct
         </Text>
         <Text testID="session-results-xp" style={styles.resultsXp}>+{xp} XP</Text>
-        <BigButton testID="collect-rewards" label="Collect rewards" color={colors.leaf} emoji="🎁" onPress={() => onFinish(correct, questions.length, xp)} />
+        <BigButton testID="collect-rewards" label="Collect rewards" color={colors.bubblegum} emoji="🍬" onPress={() => onFinish(correct, questions.length, xp)} />
       </View>
     );
   }
@@ -43,7 +43,7 @@ export function SessionRunner({ title, questions, onExit, onFinish }: Props) {
       <View style={styles.topRow}>
         <Text testID="session-exit" accessibilityRole="button" style={styles.exit} onPress={onExit}>✕</Text>
         <View style={{ flex: 1 }}>
-          <ProgressBar value={index / questions.length} />
+          <ProgressBar value={index / questions.length} color={colors.bubblegum} />
         </View>
         <Text testID="session-question-counter" style={styles.counter}>
           {index + 1}/{questions.length}
@@ -77,13 +77,13 @@ const styles = StyleSheet.create({
   wrap: { flex: 1 },
   topRow: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 16, paddingTop: 8 },
   exit: { fontSize: 24, color: colors.inkSoft, padding: 4 },
-  counter: { fontSize: 16, fontWeight: '800', color: colors.inkSoft },
+  counter: { fontSize: 16, fontWeight: '800', color: colors.bubblegumDeep },
   title: { fontSize: 18, fontWeight: '700', color: colors.inkSoft, textAlign: 'center', marginTop: 4 },
   fbGood: { fontSize: 20, fontWeight: '800', color: colors.leaf, textAlign: 'center' },
   fbCard: { marginHorizontal: 16, alignItems: 'center', gap: 6 },
   fbWrong: { fontSize: 16, fontWeight: '700', color: colors.coral },
   results: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 18, padding: 24 },
-  resultsTitle: { fontSize: 34, fontWeight: '900', color: colors.ink },
+  resultsTitle: { fontSize: 34, fontWeight: '900', color: colors.bubblegumDeep },
   resultsScore: { fontSize: 22, fontWeight: '800', color: colors.ink },
   resultsXp: { fontSize: 18, fontWeight: '800', color: colors.gold },
 });
