@@ -25,6 +25,6 @@ export default function IndexScreen() {
 }
 
 const styles = StyleSheet.create({
-  title: { color: colors.skyDeep, fontSize: 38, fontWeight: '900', textAlign: 'center', marginTop: 100 },
+  title: { color: colors.bubblegum, fontSize: 40, fontWeight: '900', textAlign: 'center', marginTop: 100 },
   caption: { color: colors.inkSoft, fontSize: 18, textAlign: 'center', marginTop: 12 },
 });

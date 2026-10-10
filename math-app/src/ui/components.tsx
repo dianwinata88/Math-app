@@ -12,7 +12,7 @@ export function Screen({ children, bg = colors.cream }: { children: React.ReactN
 export function BigButton({
   label,
   onPress,
-  color = colors.skyDeep,
+  color = colors.bubblegum,
   disabled,
   emoji,
   testID,
@@ -32,7 +32,7 @@ export function BigButton({
       style={({ pressed }) => [
         styles.bigButton,
         { backgroundColor: disabled ? colors.locked : color },
-        pressed && !disabled && { transform: [{ scale: 0.96 }] },
+        pressed && !disabled && { transform: [{ scale: 0.95 }], borderBottomWidth: 2, marginTop: 4 },
       ]}>
       <Text style={styles.bigButtonText}>
         {emoji ? `${emoji} ` : ''}
@@ -56,7 +56,7 @@ export function ProgressBar({ value, color = colors.leaf }: { value: number; col
 
 export function StarRow({ stars, size = 22 }: { stars: number; size?: number }) {
   return (
-    <Text style={{ fontSize: size, letterSpacing: 2 }}>
+    <Text style={{ fontSize: size, letterSpacing: 3, color: colors.gold }}>
       {'★'.repeat(stars)}
       <Text style={{ color: colors.locked }}>{'★'.repeat(Math.max(0, 3 - stars))}</Text>
     </Text>
@@ -97,7 +97,7 @@ export function NumberPad({ onKey, onSubmit }: { onKey: (digit: string) => void;
           accessibilityRole="button"
           accessibilityLabel={k === '⏎' ? 'Submit' : k === '⌫' ? 'Delete' : `Digit ${k}`}
           onPress={() => (k === '⌫' ? onKey('backspace') : k === '⏎' ? onSubmit() : onKey(k))}
-          style={({ pressed }) => [styles.padKey, pressed && { backgroundColor: colors.sky }]}>
+          style={({ pressed }) => [styles.padKey, pressed && { backgroundColor: colors.sky, transform: [{ scale: 0.94 }] }]}>
           <Text style={styles.padKeyText}>{k}</Text>
         </Pressable>
       ))}
@@ -127,33 +127,35 @@ export function Pill({ label, color = colors.skyDeep, textColor = '#fff' }: { la
 const styles = StyleSheet.create({
   screen: { flex: 1 },
   bigButton: {
-    paddingVertical: 16,
-    paddingHorizontal: 28,
+    paddingVertical: 18,
+    paddingHorizontal: 30,
     borderRadius: radius.pill,
+    borderBottomWidth: 5,
+    borderColor: 'rgba(74, 53, 86, 0.18)',
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOpacity: 0.15,
-    shadowRadius: 6,
-    shadowOffset: { width: 0, height: 3 },
-    elevation: 3,
+    shadowColor: colors.bubblegumDeep,
+    shadowOpacity: 0.25,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 4,
   },
-  bigButtonText: { color: '#fff', fontSize: 20, fontWeight: '800' },
+  bigButtonText: { color: '#fff', fontSize: 21, fontWeight: '800', letterSpacing: 0.5 },
   card: {
     backgroundColor: colors.card,
     borderRadius: radius.lg,
-    padding: 16,
-    shadowColor: '#000',
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 2,
+    padding: 18,
+    shadowColor: colors.bubblegumDeep,
+    shadowOpacity: 0.12,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 3,
   },
-  progressTrack: { height: 12, borderRadius: 6, backgroundColor: '#E8E2D0', overflow: 'hidden' },
-  progressFill: { height: '100%', borderRadius: 6 },
+  progressTrack: { height: 16, borderRadius: radius.pill, backgroundColor: '#FBE3EF', overflow: 'hidden' },
+  progressFill: { height: '100%', borderRadius: radius.pill },
   visualText: { fontSize: 52, fontWeight: '900', color: colors.ink, textAlign: 'center' },
   visualRow: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 12 },
-  visualGroup: { backgroundColor: '#F3EFE0', borderRadius: radius.md, padding: 8 },
+  visualGroup: { backgroundColor: '#FDEFF7', borderRadius: radius.md, padding: 10, borderWidth: 2, borderColor: '#F8D2E6' },
   visualEmoji: { fontSize: 34, textAlign: 'center', letterSpacing: 4 },
   pad: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 10, maxWidth: 360 },
   padKey: {
@@ -161,26 +163,29 @@ const styles = StyleSheet.create({
     aspectRatio: 1.6,
     backgroundColor: colors.card,
     borderRadius: radius.md,
+    borderWidth: 2,
+    borderColor: '#F8D2E6',
+    borderBottomWidth: 4,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    shadowOffset: { width: 0, height: 2 },
+    shadowColor: colors.bubblegumDeep,
+    shadowOpacity: 0.12,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 3 },
     elevation: 2,
   },
-  padKeyText: { fontSize: 28, fontWeight: '800', color: colors.ink },
+  padKeyText: { fontSize: 28, fontWeight: '800', color: colors.bubblegumDeep },
   mascotRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 10, paddingHorizontal: 8 },
   mascotEmoji: { fontSize: 44 },
   mascotBubble: {
     flex: 1,
-    backgroundColor: colors.card,
+    backgroundColor: '#FFF9FD',
     borderRadius: radius.md,
     padding: 12,
-    borderWidth: 2,
-    borderColor: colors.sun,
+    borderWidth: 3,
+    borderColor: colors.bubblegum,
   },
   mascotText: { fontSize: 17, color: colors.ink, fontWeight: '600' },
-  pill: { paddingVertical: 4, paddingHorizontal: 12, borderRadius: radius.pill },
+  pill: { paddingVertical: 6, paddingHorizontal: 14, borderRadius: radius.pill },
   pillText: { fontSize: 13, fontWeight: '800' },
 });

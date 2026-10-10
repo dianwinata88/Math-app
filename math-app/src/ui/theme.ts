@@ -1,33 +1,36 @@
 export const colors = {
-  sky: '#7CC6FE',
-  skyDeep: '#208AEF',
-  grass: '#8ED081',
-  leaf: '#4CAF50',
-  sun: '#FFD166',
-  coral: '#FF6B6B',
-  grape: '#9B5DE5',
-  cream: '#FFF8E7',
-  ink: '#2D3142',
-  inkSoft: '#6B7280',
+  // Candy Pop palette — bubblegum, sky, mint, lemon
+  bubblegum: '#FF7BAC',
+  bubblegumDeep: '#F25C93',
+  sky: '#A8DCFF',
+  skyDeep: '#4FB3F0',
+  grass: '#9EEBC0',
+  leaf: '#3ECF9E',
+  sun: '#FFE066',
+  coral: '#FF7E7E',
+  grape: '#C9A0F5',
+  cream: '#FFF4FA',
+  ink: '#4A3556',
+  inkSoft: '#9A86A8',
   card: '#FFFFFF',
-  locked: '#C9CED6',
-  gold: '#F4B400',
+  locked: '#E4D9EA',
+  gold: '#FFB629',
 };
 
 export const gradeColors: Record<string, string> = {
-  prek: '#FF8FA3',
-  k: '#FFB84D',
-  g1: '#8ED081',
-  g2: '#5BC0EB',
-  g3: '#9B5DE5',
-  g4: '#F15BB5',
-  g5: '#208AEF',
+  prek: '#FF8FB3',
+  k: '#FFB45E',
+  g1: '#7FE3C4',
+  g2: '#6FC8F2',
+  g3: '#C9A0F5',
+  g4: '#FF9ED2',
+  g5: '#5FA8F5',
 };
 
 export const radius = {
-  sm: 10,
-  md: 18,
-  lg: 28,
+  sm: 14,
+  md: 24,
+  lg: 34,
   pill: 999,
 };
 

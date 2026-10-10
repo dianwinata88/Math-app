@@ -75,7 +75,7 @@ function ChoiceGame({ question, onResult }: Props) {
               }}
               style={[
                 styles.option,
-                isPicked && !locked && { borderColor: colors.skyDeep },
+                isPicked && !locked && { borderColor: colors.bubblegum },
                 isRight && { backgroundColor: colors.grass },
                 isWrong && { backgroundColor: colors.coral },
               ]}>
@@ -103,7 +103,7 @@ function NumberPadGame({ question, onResult }: Props) {
   return (
     <View style={styles.container}>
       <Prompt question={question} />
-      <Card style={[styles.answerCard, locked && { borderColor: checkAnswer(question, value) ? colors.leaf : colors.coral, borderWidth: 3 }]}>
+      <Card style={[styles.answerCard, locked && { borderColor: checkAnswer(question, value) ? colors.leaf : colors.coral, borderWidth: 4 }]}>
         <Text testID="number-pad-answer" style={styles.answerText}>{value === '' ? '?' : value}</Text>
       </Card>
       <NumberPad
@@ -159,7 +159,7 @@ function MatchPairsGame({ question, onResult }: Props) {
   return (
     <View style={styles.container}>
       <Prompt question={question} />
-      <MascotBubble text="Tap a card on the left, then its match on the right!" emoji="🐵" />
+      <MascotBubble text="Tap a card on the left, then its match on the right!" emoji="🐷" />
       <View style={styles.matchRow}>
         <View style={styles.matchCol}>
           {lefts.map((l) => (
@@ -215,7 +215,7 @@ function OrderSequenceGame({ question, onResult }: Props) {
   return (
     <View style={styles.container}>
       <Prompt question={question} />
-      <MascotBubble text={`Tap them in order! (${nextIdx}/${sequence.length})`} emoji="🐢" />
+      <MascotBubble text={`Tap them in order! (${nextIdx}/${sequence.length})`} emoji="🐭" />
       <View style={styles.seqWrap}>
         {shuffled.map((item) => {
           const used = sequence.indexOf(item) < nextIdx;
@@ -231,14 +231,14 @@ function OrderSequenceGame({ question, onResult }: Props) {
           );
         })}
       </View>
-      {nextIdx >= sequence.length ? <BigButton testID="sequence-done" label="Done!" onPress={() => onResult(errors === 0)} color={colors.leaf} /> : null}
+      {nextIdx >= sequence.length ? <BigButton testID="sequence-done" label="Done!" emoji="🍬" onPress={() => onResult(errors === 0)} color={colors.leaf} /> : null}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1, gap: 14, padding: 16 },
-  promptCard: { gap: 12, alignItems: 'center' },
+  promptCard: { gap: 14, alignItems: 'center' },
   prompt: { fontSize: 24, fontWeight: '800', color: colors.ink, textAlign: 'center' },
   hint: { fontSize: 14, color: colors.inkSoft },
   optionsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12, justifyContent: 'center' },
@@ -246,14 +246,20 @@ const styles = StyleSheet.create({
     minWidth: '44%',
     backgroundColor: colors.card,
     borderRadius: radius.md,
-    padding: 18,
+    padding: 20,
     alignItems: 'center',
-    borderWidth: 3,
-    borderColor: 'transparent',
+    borderWidth: 4,
+    borderColor: '#F8D2E6',
+    borderBottomWidth: 5,
+    shadowColor: colors.bubblegumDeep,
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 3 },
+    elevation: 2,
   },
   optionText: { fontSize: 24, fontWeight: '800', color: colors.ink },
-  answerCard: { alignSelf: 'center', minWidth: 140, alignItems: 'center', paddingVertical: 8 },
-  answerText: { fontSize: 40, fontWeight: '900', color: colors.ink },
+  answerCard: { alignSelf: 'center', minWidth: 140, alignItems: 'center', paddingVertical: 10, borderRadius: radius.pill },
+  answerText: { fontSize: 40, fontWeight: '900', color: colors.bubblegumDeep },
   matchRow: { flexDirection: 'row', gap: 16, justifyContent: 'center' },
   matchCol: { gap: 10, flex: 1 },
   matchCard: {
@@ -261,11 +267,11 @@ const styles = StyleSheet.create({
     borderRadius: radius.md,
     padding: 16,
     alignItems: 'center',
-    borderWidth: 3,
-    borderColor: 'transparent',
+    borderWidth: 4,
+    borderColor: '#F8D2E6',
   },
   matched: { backgroundColor: colors.grass, opacity: 0.6 },
-  selected: { borderColor: colors.skyDeep },
+  selected: { borderColor: colors.bubblegum },
   matchText: { fontSize: 22, fontWeight: '800', color: colors.ink },
   seqWrap: { flexDirection: 'row', flexWrap: 'wrap', gap: 12, justifyContent: 'center' },
   seqItem: {
@@ -273,8 +279,8 @@ const styles = StyleSheet.create({
     borderRadius: radius.md,
     paddingVertical: 14,
     paddingHorizontal: 20,
-    borderWidth: 3,
-    borderColor: 'transparent',
+    borderWidth: 4,
+    borderColor: '#F8D2E6',
   },
   seqText: { fontSize: 26, fontWeight: '900', color: colors.ink },
 });
