@@ -32,7 +32,7 @@ export function BigButton({
       style={({ pressed }) => [
         styles.bigButton,
         { backgroundColor: disabled ? colors.locked : color },
-        pressed && !disabled && { transform: [{ scale: 0.96 }] },
+        pressed && !disabled && { opacity: 0.88 },
       ]}>
       <Text style={styles.bigButtonText}>
         {emoji ? `${emoji} ` : ''}
@@ -56,7 +56,7 @@ export function ProgressBar({ value, color = colors.leaf }: { value: number; col
 
 export function StarRow({ stars, size = 22 }: { stars: number; size?: number }) {
   return (
-    <Text style={{ fontSize: size, letterSpacing: 2 }}>
+    <Text style={{ fontSize: size, letterSpacing: 2, color: colors.gold }}>
       {'★'.repeat(stars)}
       <Text style={{ color: colors.locked }}>{'★'.repeat(Math.max(0, 3 - stars))}</Text>
     </Text>
@@ -127,60 +127,49 @@ export function Pill({ label, color = colors.skyDeep, textColor = '#fff' }: { la
 const styles = StyleSheet.create({
   screen: { flex: 1 },
   bigButton: {
-    paddingVertical: 16,
-    paddingHorizontal: 28,
-    borderRadius: radius.pill,
+    paddingVertical: 15,
+    paddingHorizontal: 26,
+    borderRadius: radius.md,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOpacity: 0.15,
-    shadowRadius: 6,
-    shadowOffset: { width: 0, height: 3 },
-    elevation: 3,
   },
-  bigButtonText: { color: '#fff', fontSize: 20, fontWeight: '800' },
+  bigButtonText: { color: '#fff', fontSize: 19, fontWeight: '700', letterSpacing: 0.3 },
   card: {
     backgroundColor: colors.card,
-    borderRadius: radius.lg,
+    borderRadius: radius.md,
     padding: 16,
-    shadowColor: '#000',
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 2,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
-  progressTrack: { height: 12, borderRadius: 6, backgroundColor: '#E8E2D0', overflow: 'hidden' },
-  progressFill: { height: '100%', borderRadius: 6 },
-  visualText: { fontSize: 52, fontWeight: '900', color: colors.ink, textAlign: 'center' },
+  progressTrack: { height: 6, borderRadius: 3, backgroundColor: colors.border, overflow: 'hidden' },
+  progressFill: { height: '100%', borderRadius: 3 },
+  visualText: { fontSize: 48, fontWeight: '800', color: colors.ink, textAlign: 'center' },
   visualRow: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 12 },
-  visualGroup: { backgroundColor: '#F3EFE0', borderRadius: radius.md, padding: 8 },
+  visualGroup: { backgroundColor: colors.paper, borderRadius: radius.sm, padding: 8, borderWidth: 1, borderColor: colors.border },
   visualEmoji: { fontSize: 34, textAlign: 'center', letterSpacing: 4 },
   pad: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 10, maxWidth: 360 },
   padKey: {
     width: '28%',
     aspectRatio: 1.6,
     backgroundColor: colors.card,
-    borderRadius: radius.md,
+    borderRadius: radius.sm,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 2,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
-  padKeyText: { fontSize: 28, fontWeight: '800', color: colors.ink },
+  padKeyText: { fontSize: 26, fontWeight: '700', color: colors.ink },
   mascotRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 10, paddingHorizontal: 8 },
-  mascotEmoji: { fontSize: 44 },
+  mascotEmoji: { fontSize: 38 },
   mascotBubble: {
     flex: 1,
     backgroundColor: colors.card,
     borderRadius: radius.md,
     padding: 12,
-    borderWidth: 2,
-    borderColor: colors.sun,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
-  mascotText: { fontSize: 17, color: colors.ink, fontWeight: '600' },
+  mascotText: { fontSize: 16, color: colors.ink, fontWeight: '600' },
   pill: { paddingVertical: 4, paddingHorizontal: 12, borderRadius: radius.pill },
-  pillText: { fontSize: 13, fontWeight: '800' },
+  pillText: { fontSize: 13, fontWeight: '700' },
 });

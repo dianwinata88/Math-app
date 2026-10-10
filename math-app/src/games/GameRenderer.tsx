@@ -76,8 +76,8 @@ function ChoiceGame({ question, onResult }: Props) {
               style={[
                 styles.option,
                 isPicked && !locked && { borderColor: colors.skyDeep },
-                isRight && { backgroundColor: colors.grass },
-                isWrong && { backgroundColor: colors.coral },
+                isRight && { backgroundColor: colors.correctBg, borderColor: colors.leaf },
+                isWrong && { backgroundColor: colors.wrongBg, borderColor: colors.coral },
               ]}>
               <Text testID={`answer-label-${opt.id}`} style={styles.optionText}>
                 {opt.emoji ? `${opt.emoji} ` : ''}
@@ -103,7 +103,7 @@ function NumberPadGame({ question, onResult }: Props) {
   return (
     <View style={styles.container}>
       <Prompt question={question} />
-      <Card style={[styles.answerCard, locked && { borderColor: checkAnswer(question, value) ? colors.leaf : colors.coral, borderWidth: 3 }]}>
+      <Card style={[styles.answerCard, locked && { borderColor: checkAnswer(question, value) ? colors.leaf : colors.coral, borderWidth: 2 }]}>
         <Text testID="number-pad-answer" style={styles.answerText}>{value === '' ? '?' : value}</Text>
       </Card>
       <NumberPad
@@ -182,7 +182,7 @@ function MatchPairsGame({ question, onResult }: Props) {
                 testID={`match-right-${r}`}
                 disabled={ownerMatched}
                 onPress={() => tapRight(r)}
-                style={[styles.matchCard, ownerMatched && styles.matched, flash === r && { backgroundColor: colors.coral }]}>
+                style={[styles.matchCard, ownerMatched && styles.matched, flash === r && { backgroundColor: colors.wrongBg, borderColor: colors.coral }]}>
                 <Text style={styles.matchText}>{r}</Text>
               </Pressable>
             );
@@ -225,7 +225,7 @@ function OrderSequenceGame({ question, onResult }: Props) {
               testID={`sequence-item-${item}`}
               disabled={used}
               onPress={() => tap(item)}
-              style={[styles.seqItem, used && styles.matched, wrong === item && { backgroundColor: colors.coral }]}>
+              style={[styles.seqItem, used && styles.matched, wrong === item && { backgroundColor: colors.wrongBg, borderColor: colors.coral }]}>
               <Text style={styles.seqText}>{item}</Text>
             </Pressable>
           );
@@ -239,42 +239,42 @@ function OrderSequenceGame({ question, onResult }: Props) {
 const styles = StyleSheet.create({
   container: { flex: 1, gap: 14, padding: 16 },
   promptCard: { gap: 12, alignItems: 'center' },
-  prompt: { fontSize: 24, fontWeight: '800', color: colors.ink, textAlign: 'center' },
+  prompt: { fontSize: 22, fontWeight: '800', color: colors.ink, textAlign: 'center' },
   hint: { fontSize: 14, color: colors.inkSoft },
-  optionsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12, justifyContent: 'center' },
+  optionsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, justifyContent: 'center' },
   option: {
     minWidth: '44%',
     backgroundColor: colors.card,
     borderRadius: radius.md,
     padding: 18,
     alignItems: 'center',
-    borderWidth: 3,
-    borderColor: 'transparent',
+    borderWidth: 1.5,
+    borderColor: colors.border,
   },
-  optionText: { fontSize: 24, fontWeight: '800', color: colors.ink },
+  optionText: { fontSize: 22, fontWeight: '700', color: colors.ink },
   answerCard: { alignSelf: 'center', minWidth: 140, alignItems: 'center', paddingVertical: 8 },
-  answerText: { fontSize: 40, fontWeight: '900', color: colors.ink },
-  matchRow: { flexDirection: 'row', gap: 16, justifyContent: 'center' },
+  answerText: { fontSize: 38, fontWeight: '800', color: colors.ink },
+  matchRow: { flexDirection: 'row', gap: 14, justifyContent: 'center' },
   matchCol: { gap: 10, flex: 1 },
   matchCard: {
     backgroundColor: colors.card,
     borderRadius: radius.md,
     padding: 16,
     alignItems: 'center',
-    borderWidth: 3,
-    borderColor: 'transparent',
+    borderWidth: 1.5,
+    borderColor: colors.border,
   },
-  matched: { backgroundColor: colors.grass, opacity: 0.6 },
-  selected: { borderColor: colors.skyDeep },
-  matchText: { fontSize: 22, fontWeight: '800', color: colors.ink },
-  seqWrap: { flexDirection: 'row', flexWrap: 'wrap', gap: 12, justifyContent: 'center' },
+  matched: { backgroundColor: colors.correctBg, borderColor: colors.leaf, opacity: 0.65 },
+  selected: { borderColor: colors.skyDeep, borderWidth: 2 },
+  matchText: { fontSize: 20, fontWeight: '700', color: colors.ink },
+  seqWrap: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, justifyContent: 'center' },
   seqItem: {
     backgroundColor: colors.card,
     borderRadius: radius.md,
     paddingVertical: 14,
     paddingHorizontal: 20,
-    borderWidth: 3,
-    borderColor: 'transparent',
+    borderWidth: 1.5,
+    borderColor: colors.border,
   },
-  seqText: { fontSize: 26, fontWeight: '900', color: colors.ink },
+  seqText: { fontSize: 24, fontWeight: '800', color: colors.ink },
 });

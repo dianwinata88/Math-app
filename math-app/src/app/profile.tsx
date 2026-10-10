@@ -25,7 +25,7 @@ export default function ProfileScreen() {
     <Screen>
       <ScrollView contentContainerStyle={styles.content}>
         <BigButton testID="profile-back" label="Back to map" emoji="🗺️" onPress={() => router.replace('/home')} />
-        <Text testID="profile-title" style={styles.title}>Parent Area ⚙️</Text>
+        <Text testID="profile-title" style={styles.title}>Parent Area</Text>
         <Card style={styles.playerCard}>
           <Text style={styles.avatar}>{profile.avatar}</Text>
           <View>
@@ -45,7 +45,7 @@ export default function ProfileScreen() {
               accessibilityRole="button"
               accessibilityLabel={`${grade.title}, ${earned} of ${max} stars${active ? ', selected' : ''}`}
               onPress={() => setGrade(grade.id)}
-              style={[styles.gradeRow, { borderColor: gradeColors[grade.id] }, active && styles.selected]}>
+              style={[styles.gradeRow, { borderLeftColor: gradeColors[grade.id] }, active && { backgroundColor: `${gradeColors[grade.id]}12` }]}>
               <View style={styles.gradeInfo}>
                 <Text style={styles.gradeName}>{grade.title}</Text>
                 <Text style={styles.gradeAge}>Ages {grade.ages}</Text>
@@ -74,23 +74,22 @@ export default function ProfileScreen() {
 }
 
 const styles = StyleSheet.create({
-  content: { alignSelf: 'center', width: '100%', maxWidth: 660, padding: 18, gap: 14, alignItems: 'center' },
-  title: { color: colors.ink, fontSize: 28, textAlign: 'center', fontWeight: '900' },
+  content: { alignSelf: 'center', width: '100%', maxWidth: 660, padding: 20, gap: 14, alignItems: 'center' },
+  title: { color: colors.ink, fontSize: 26, textAlign: 'center', fontWeight: '800', letterSpacing: 0.2 },
   playerCard: { width: '100%', flexDirection: 'row', alignItems: 'center', gap: 14 },
-  avatar: { fontSize: 42 },
-  playerName: { color: colors.ink, fontSize: 21, fontWeight: '900' },
+  avatar: { fontSize: 40 },
+  playerName: { color: colors.ink, fontSize: 20, fontWeight: '800' },
   playerCaption: { color: colors.inkSoft, fontSize: 14 },
-  heading: { color: colors.ink, alignSelf: 'flex-start', fontSize: 20, fontWeight: '900', marginTop: 4 },
-  gradeRow: { width: '100%', minHeight: 70, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 14, paddingVertical: 10, borderWidth: 2, borderRadius: radius.md, backgroundColor: colors.card, gap: 8 },
-  selected: { backgroundColor: '#FFF2C8' },
+  heading: { color: colors.ink, alignSelf: 'flex-start', fontSize: 18, fontWeight: '800', marginTop: 4 },
+  gradeRow: { width: '100%', minHeight: 66, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 14, paddingVertical: 10, borderWidth: 1, borderLeftWidth: 4, borderColor: colors.border, borderRadius: radius.md, backgroundColor: colors.card, gap: 8 },
   gradeInfo: { flex: 1 },
-  gradeName: { color: colors.ink, fontSize: 18, fontWeight: '900' },
+  gradeName: { color: colors.ink, fontSize: 17, fontWeight: '800' },
   gradeAge: { color: colors.inkSoft, fontSize: 13, marginTop: 2 },
-  stars: { color: colors.ink, fontSize: 14, fontWeight: '800' },
-  current: { color: colors.leaf, fontSize: 12, fontWeight: '900' },
+  stars: { color: colors.ink, fontSize: 14, fontWeight: '700' },
+  current: { color: colors.leaf, fontSize: 12, fontWeight: '800', letterSpacing: 0.4 },
   confirmOverlay: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, alignItems: 'center', justifyContent: 'center', backgroundColor: '#0008', padding: 20 },
   confirmCard: { width: '100%', maxWidth: 440, alignItems: 'center', gap: 14 },
-  confirmTitle: { color: colors.ink, fontSize: 23, fontWeight: '900' },
+  confirmTitle: { color: colors.ink, fontSize: 22, fontWeight: '800' },
   confirmCopy: { color: colors.inkSoft, fontSize: 15, textAlign: 'center' },
   confirmActions: { flexDirection: 'row', gap: 10, flexWrap: 'wrap', justifyContent: 'center' },
 });

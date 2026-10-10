@@ -26,7 +26,7 @@ export default function OnboardingScreen() {
   return (
     <Screen>
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-        <Text testID="onboarding-title" style={styles.title}>Let’s start your quest! ✨</Text>
+        <Text testID="onboarding-title" style={styles.title}>Let’s start your quest!</Text>
         <Text testID="onboarding-step" style={styles.step}>Step {step} of 3</Text>
         {step === 1 ? (
           <View style={styles.panel}>
@@ -77,7 +77,7 @@ export default function OnboardingScreen() {
                   testID={`onboarding-grade-${grade.id}`}
                   accessibilityRole="button"
                   onPress={() => setGradeId(grade.id)}
-                  style={[styles.gradeCard, { borderColor: gradeColors[grade.id] }, gradeId === grade.id && styles.gradeSelected]}>
+                  style={[styles.gradeCard, { borderColor: gradeColors[grade.id] }, gradeId === grade.id && { backgroundColor: `${gradeColors[grade.id]}1A` }]}>
                   <Text style={styles.gradeTitle}>{grade.title}</Text>
                   <Text style={styles.gradeAge}>Ages {grade.ages}</Text>
                 </Pressable>
@@ -100,22 +100,21 @@ export default function OnboardingScreen() {
 
 const styles = StyleSheet.create({
   content: { flexGrow: 1, alignItems: 'center', padding: 20, gap: 14 },
-  title: { color: colors.ink, fontSize: 30, fontWeight: '900', textAlign: 'center', marginTop: 18 },
-  step: { color: colors.skyDeep, fontSize: 18, fontWeight: '800' },
+  title: { color: colors.ink, fontSize: 28, fontWeight: '800', textAlign: 'center', letterSpacing: 0.2, marginTop: 18 },
+  step: { color: colors.inkSoft, fontSize: 14, fontWeight: '700', letterSpacing: 0.8, textTransform: 'uppercase' },
   panel: { width: '100%', maxWidth: 540, gap: 18, alignItems: 'center' },
-  prompt: { color: colors.ink, fontSize: 23, fontWeight: '800', textAlign: 'center' },
-  input: { width: '100%', padding: 16, backgroundColor: colors.card, borderRadius: radius.md, borderWidth: 2, borderColor: colors.sky, fontSize: 22 },
-  grid: { width: '100%', flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 12 },
-  avatar: { width: 76, height: 76, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.card, borderWidth: 3, borderColor: colors.card, borderRadius: radius.md },
-  avatarSelected: { borderColor: colors.skyDeep, backgroundColor: '#E6F4FE' },
-  avatarEmoji: { fontSize: 42 },
+  prompt: { color: colors.ink, fontSize: 21, fontWeight: '800', textAlign: 'center' },
+  input: { width: '100%', padding: 14, backgroundColor: colors.card, borderRadius: radius.sm, borderWidth: 1, borderColor: colors.border, fontSize: 20, color: colors.ink },
+  grid: { width: '100%', flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 10 },
+  avatar: { width: 76, height: 76, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.card, borderWidth: 1, borderColor: colors.border, borderRadius: radius.md },
+  avatarSelected: { borderColor: colors.skyDeep, borderWidth: 2, backgroundColor: colors.sky },
+  avatarEmoji: { fontSize: 40 },
   gradeGrid: { width: '100%', flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 10 },
-  gradeCard: { width: '30%', minWidth: 118, alignItems: 'center', backgroundColor: colors.card, borderWidth: 3, borderRadius: radius.md, paddingVertical: 14, paddingHorizontal: 8 },
-  gradeSelected: { backgroundColor: '#FFF0B8' },
-  gradeTitle: { color: colors.ink, fontSize: 19, fontWeight: '900' },
+  gradeCard: { width: '30%', minWidth: 118, alignItems: 'center', backgroundColor: colors.card, borderWidth: 1.5, borderRadius: radius.md, paddingVertical: 14, paddingHorizontal: 8 },
+  gradeTitle: { color: colors.ink, fontSize: 18, fontWeight: '800' },
   gradeAge: { color: colors.inkSoft, fontSize: 13, marginTop: 3 },
   actions: { flexDirection: 'row', gap: 12, alignItems: 'center', justifyContent: 'center' },
   mascotCard: { flexDirection: 'row', alignItems: 'center', gap: 12, marginTop: 10 },
-  mascot: { fontSize: 38 },
-  mascotCopy: { color: colors.inkSoft, fontSize: 16, fontWeight: '700', flexShrink: 1 },
+  mascot: { fontSize: 36 },
+  mascotCopy: { color: colors.inkSoft, fontSize: 15, fontWeight: '600', flexShrink: 1 },
 });

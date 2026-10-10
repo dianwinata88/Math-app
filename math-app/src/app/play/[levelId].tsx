@@ -42,5 +42,5 @@ export default function PlayLevelScreen() {
 }
 
 const styles = StyleSheet.create({
-  message: { color: colors.ink, fontSize: 24, fontWeight: '800', textAlign: 'center', margin: 30 },
+  message: { color: colors.ink, fontSize: 22, fontWeight: '700', textAlign: 'center', margin: 30 },
 });
