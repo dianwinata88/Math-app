@@ -34,7 +34,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: 👀 Checkout
-        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v4
       - name: 🐦 Install Swift ${{ env.SWIFT_VERSION }}
         run: |
           set -euo pipefail
@@ -52,7 +52,7 @@ jobs:
           echo "/opt/swift/usr/bin" >> "$GITHUB_PATH"
       - name: ♻️ Cache swift-format binary
         id: swift-format-cache
-        uses: actions/cache@1bd1e32a3bdc45362d1e726936510720a7c30a57 # v4
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v4
         with:
           path: ~/.local/bin/swift-format
           key: swift-format-${{ runner.os }}-${{ env.SWIFT_FORMAT_VERSION }}
